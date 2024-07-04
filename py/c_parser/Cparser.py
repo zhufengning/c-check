@@ -197,6 +197,10 @@ class Cparser(object):
         """compound_instr : '{' declarations instructions '}'"""
         p[0] = CompoundInstructions(p[2], p[3])
 
+    def p_compound_instr2(self, p):
+        """compound_instr : '{' '}'"""
+        p[0] = CompoundInstructions(DeclarationList([]), InstructionList([]))
+
     def p_condition(self, p):
         """condition : expression"""
         p[0] = p[1]
@@ -302,7 +306,7 @@ class Cparser(object):
     def p_args_list_or_empty(self, p):
         """args_list_or_empty : args_list
         |"""
-        if p[1]:
+        if len(p) > 1:
             p[0] = p[1]
         else:
             p[0] = ArgsList([])

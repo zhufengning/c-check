@@ -68,6 +68,7 @@ class TreePrinter:
 
     @addToClass(AST.DeclarationList)
     def printTree(self, l):
+        # tprint(l, "DECL_LIST")
         for decl in self.decls:
             decl.printTree(l)
 
@@ -129,8 +130,9 @@ class TreePrinter:
 
     @addToClass(AST.CompoundInstructions)
     def printTree(self, l):
-        self.decls.printTree(l)
-        self.instrs.printTree(l)
+        tprint(l, "BLOCK")
+        self.decls.printTree(l + 1)
+        self.instrs.printTree(l + 1)
 
     @addToClass(AST.Assignment)
     def printTree(self, l):
