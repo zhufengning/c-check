@@ -202,3 +202,8 @@ class Arg(Node):
     def __init__(self, type, id):
         self.type = type
         self.id = id
+
+
+class Null(Node):
+    def __init__(self):
+        pass

@@ -1,4 +1,9 @@
-#!/usr/bin/python
+# 更新记录：
+# 1. 修复函数调用必须将结果赋给变量的问题
+# 2. 修复一行中仅有表达式时不被当作语句的问题
+# 3. 添加for循环
+# 4. 修复空代码块卡死
+# 5. 变量定义不再必须赋初值
 
 from clexer import Scanner
 from AST import *
@@ -100,6 +105,11 @@ class Cparser(object):
     def p_init(self, p):
         """init : ID '=' expression"""
         p[0] = Init(p[1], p[3])
+
+    def p_init2(self, p):
+        """init : ID"""
+        print(p[1])
+        p[0] = Init(p[1], Null())
 
     def p_instructions(self, p):
         """instructions : instructions instruction"""
@@ -223,6 +233,8 @@ class Cparser(object):
 
     def p_expression_id(self, p):
         "expression : ID"
+        # line_start = input.rfind("\n", 0, p[1].lexpos) + 1
+        print(p.lexspan(1))
         p[0] = Variable(p[1], pos(p))
 
     def p_expression_brackets(self, p):

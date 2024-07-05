@@ -5,7 +5,9 @@ int f() {
 int main() {
   int a = 0;
   printf("%d", a);
-  f();
+  f(a + 2);
+  float fuck;
+  printf("%lf", fuck);
   while (1) {
   }
 }

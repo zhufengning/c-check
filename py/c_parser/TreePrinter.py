@@ -64,7 +64,7 @@ class TreePrinter:
 
     @addToClass(AST.Variable)
     def printTree(self, l):
-        tprint(l, self.id)
+        tprint(l, self.id + " " + str(self.pos.line))
 
     @addToClass(AST.DeclarationList)
     def printTree(self, l):
@@ -156,6 +156,10 @@ class TreePrinter:
         tprint(l, "ARG")
         tprint(l + 1, self.type)
         tprint(l + 1, self.id)
+
+    @addToClass(AST.Null)
+    def printTree(self, l):
+        tprint(l, "NULL")
 
     @addToClass(AST.FunctionDef)
     def printTree(self, l):
