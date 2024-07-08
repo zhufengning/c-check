@@ -1,7 +1,7 @@
 from ply import lex
 
 
-class Scanner(object):
+class CLexer(object):
 
     def find_tok_column(self, token):
         last_cr = self.lexer.lexdata.rfind("\n", 0, token.lexpos)
@@ -101,5 +101,5 @@ class Scanner(object):
 
     def t_ID(self, t):
         r"[a-zA-Z_]\w*"
-        t.type = Scanner.reserved.get(t.value, "ID")
+        t.type = CLexer.reserved.get(t.value, "ID")
         return t

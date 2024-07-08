@@ -4,8 +4,9 @@
 # 3. 添加for循环
 # 4. 修复空代码块卡死
 # 5. 变量定义不再必须赋初值
+# 6. 给FUNDEF, FUNCALL和VAR添加列信息
 
-from clexer import Scanner
+from clexer import CLexer
 from AST import *
 import TreePrinter
 
@@ -19,13 +20,19 @@ def pos(p):
     return FilePosition(p.lexer.lexer.lineno - 1)
 
 
+def pos2(p, n):
+    line_start = p.lexer.lexer.lexdata.rfind("\n", 0, p.lexpos(n)) + 1
+    column = p.lexpos(n) - line_start + 1
+    return p.lexer.lexer.lineno, column
+
+
 class Cparser(object):
 
     def __init__(self):
-        self.scanner = Scanner()
+        self.scanner = CLexer()
         self.scanner.build()
 
-    tokens = Scanner.tokens
+    tokens = CLexer.tokens
 
     precedence = (
         ("nonassoc", "IFX"),
@@ -88,7 +95,7 @@ class Cparser(object):
 
     def p_declaration(self, p):
         """declaration : TYPE inits ';'"""
-        p[0] = Declaration(p[1], p[2], pos(p))
+        p[0] = Declaration(p[1], p[2], pos2(p, 1))
 
     def p_declaration_error(self, p):
         """declaration : error ';'"""
@@ -108,7 +115,7 @@ class Cparser(object):
 
     def p_init2(self, p):
         """init : ID"""
-        print(p[1])
+        # print(p[1])
         p[0] = Init(p[1], Null())
 
     def p_instructions(self, p):
@@ -142,7 +149,7 @@ class Cparser(object):
 
     def p_fun_call(self, p):
         "statement : ID '(' expr_list_or_empty ')' ';'"
-        p[0] = FunctionCall(p[1], p[3], pos(p))
+        p[0] = FunctionCall(p[1], p[3], pos2(p, 1))
 
     def p_labeled_instr(self, p):
         """labeled_instr : ID ':' instruction"""
@@ -233,9 +240,7 @@ class Cparser(object):
 
     def p_expression_id(self, p):
         "expression : ID"
-        # line_start = input.rfind("\n", 0, p[1].lexpos) + 1
-        print(p.lexspan(1))
-        p[0] = Variable(p[1], pos(p))
+        p[0] = Variable(p[1], pos2(p, 1))
 
     def p_expression_brackets(self, p):
         "expression : '(' expression ')'"
@@ -313,7 +318,7 @@ class Cparser(object):
 
     def p_fundef(self, p):
         """fundef : TYPE ID '(' args_list_or_empty ')' compound_instr"""
-        p[0] = FunctionDef(p[1], p[2], p[4], p[6], pos(p))
+        p[0] = FunctionDef(p[1], p[2], p[4], p[6], pos2(p, 2))
 
     def p_args_list_or_empty(self, p):
         """args_list_or_empty : args_list
