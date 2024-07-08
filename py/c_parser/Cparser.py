@@ -6,9 +6,9 @@
 # 5. 变量定义不再必须赋初值
 # 6. 给FUNDEF, FUNCALL和VAR添加列信息
 
-from clexer import CLexer
-from AST import *
-import TreePrinter
+from .clexer import CLexer
+from .AST import *
+from . import TreePrinter
 
 
 class FilePosition(object):

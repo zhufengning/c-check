@@ -1,3 +1,5 @@
+#include <stdio.h>
+#define a 2
 int f() {
   f();
   return 1;

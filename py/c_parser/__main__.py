@@ -2,8 +2,8 @@ import sys
 import logging
 import logging.handlers
 import ply.yacc as yacc
-from Cparser import Cparser
-from AST import *
+from .cparser import Cparser
+from .AST import *
 
 
 if __name__ == "__main__":
