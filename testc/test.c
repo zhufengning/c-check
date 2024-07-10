@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "lib.h"
 #define a 2
 int f() {
   f();

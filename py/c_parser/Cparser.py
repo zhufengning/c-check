@@ -65,7 +65,7 @@ class Cparser(object):
     def p_program(self, p):
         """program : ext_declarations fundefs instructions"""
         p[0] = Program(p[1], p[2], p[3], pos(p))
-        p[0].printTree(0)
+        # p[0].printTree(0)
 
     def p_ext_declarations(self, p):
         """ext_declarations : declarations"""

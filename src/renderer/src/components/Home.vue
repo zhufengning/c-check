@@ -1,28 +1,69 @@
 <script setup lang="ts">
-import { ComponentPublicInstance, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import * as monaco from 'monaco-editor'
-import { useRouter } from 'vue-router';
-import { nextTick } from 'vue';
+import { useRouter } from 'vue-router'
+import { nextTick } from 'vue'
+import { TreeNode } from 'primevue/treenode'
+import { apiPost } from '../../../model/api'
 //const ipcHandle = () => window.electron.ipcRenderer.send('ping')
+
 let editor1: monaco.editor.IStandaloneCodeEditor
-let editor_container = ref<ComponentPublicInstance | null>(null)
+const editor_container = ref<HTMLElement | null>(null)
 const decorations: monaco.editor.IEditorDecorationsCollection[] = []
 const router = useRouter()
 onMounted(async () => {
   await router.isReady()
   await nextTick()
   setTimeout(() => {
-    editor1 = monaco.editor.create(editor_container.value, {
-      value: 'console.log("Hello, world")'
+    editor1 = monaco.editor.create(editor_container.value!, {
+      readOnly: true,
+      language: 'c'
     })
 
-    console.log("Editor", editor1)
+    //console.log('Editor', editor1)
     editor1.getModel()!.onDidChangeContent(() => {
       test_draw()
     })
-
-  })
+  }, 100)
 })
+
+const folderIcon = 'mdi mdi-chevron-right mdi-folder' // 文件夹的图标
+const fileIcon = 'mdi mdi-chevron-down mdi-file' // 文件的图标
+
+function transformToTreeNodes(obj: any, path: string = ''): TreeNode[] {
+  //console.log(obj)
+  const result: TreeNode[] = []
+
+  Object.entries(obj).forEach(([key, value]) => {
+    const newPath = path ? `${path}/${key}` : key
+    const node: TreeNode = {
+      key: newPath,
+      label: key,
+      icon: value === null ? fileIcon : folderIcon
+    }
+
+    if (value !== null && typeof value === 'object') {
+      node.children = transformToTreeNodes(value, newPath)
+    }
+
+    result.push(node)
+  })
+
+  return result.toSorted((a, b) => {
+    console.log('sort', a, b)
+    if (a.children && !b.children) {
+      return -1
+    }
+    if (!a.children && b.children) {
+      return 1
+    }
+    return a.label!.localeCompare(b.label!)
+  })
+}
+
+async function chooseFolder() {
+  console.log(await window.api.chooseFolder())
+}
 
 function test_draw() {
   const acceptedList = ['fuck', 'shit']
@@ -50,26 +91,69 @@ function test_draw() {
   })
 }
 
-function deco_clear() {
-  if (decorations) {
-    decorations.forEach((element) => {
-      element.clear()
-    })
+// function deco_clear() {
+//   if (decorations) {
+//     decorations.forEach((element) => {
+//       element.clear()
+//     })
+//   }
+// }
+
+async function parseFile() {
+  try {
+    const res = await apiPost('scan', { filename: await window.api.chooseFolder() })
+    nodes.value = transformToTreeNodes(await res.json())
+    console.log(nodes.value)
+  } catch (e) {
+    nodes.value = []
   }
+}
+
+const nodes = ref<TreeNode[]>([])
+const selectedKey = ref<string[]>([])
+
+async function openFile(node: TreeNode) {
+  console.log(node.key)
+
+  const cwd = (await window.api.getStatus()).cwd
+  const res = await apiPost('parse', { filepath: node.key, cwd: cwd })
+  const content = await res.json()
+  editor1.setValue(content)
+  monaco.editor.setModelLanguage(editor1.getModel()!, "")
 }
 </script>
 
 <template>
   <v-layout>
-    <v-navigation-drawer image="https://cdn.vuetifyjs.com/images/backgrounds/bg-2.jpg" theme="dark" permanent>
-      <v-list nav>
-        <v-list-item prepend-icon="mdi-email" title="Inbox" value="inbox"></v-list-item>
-        <v-list-item prepend-icon="mdi-account-supervisor-circle" title="Supervisors" value="supervisors"></v-list-item>
-        <v-list-item prepend-icon="mdi-clock-start" title="Clock-in" value="clockin"></v-list-item>
-      </v-list>
+    <v-navigation-drawer permanent>
+      <v-container>
+        <v-row>
+          <v-col class="d-flex flex-wrap ga-3">
+            <v-btn prepend-icon="mdi-file" @click="parseFile">打开</v-btn>
+            <v-btn prepend-icon="mdi-apple" @click="chooseFolder">111</v-btn>
+            <v-btn prepend-icon="mdi-google" @click="chooseFolder">111</v-btn>
+          </v-col>
+        </v-row>
+        <v-row v-if="nodes.length == 0">
+          <v-col class="d-flex flex-wrap ga-3">
+            <p>文件未选择</p>
+          </v-col>
+        </v-row>
+      </v-container>
+
+      <tree
+        v-if="nodes.length > 0"
+        v-model:selectionKeys="selectedKey"
+        :value="nodes"
+        :filter="true"
+        filter-mode="lenient"
+        selection-mode="single"
+        @node-select="openFile"
+      >
+      </tree>
     </v-navigation-drawer>
     <v-main>
-      <div ref="editor_container" style="height: 90vh;"></div>
+      <div ref="editor_container" style="height: 90vh"></div>
     </v-main>
   </v-layout>
 </template>

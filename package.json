@@ -23,6 +23,9 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
+    "@primevue/themes": "^4.0.0",
+    "primevue": "^4.0.0",
+    "vite-plugin-monaco-editor": "^1.1.0",
     "vue-router": "4",
     "vuetify": "^3.6.11"
   },
@@ -30,6 +33,7 @@
     "@electron-toolkit/eslint-config": "^1.0.2",
     "@electron-toolkit/eslint-config-ts": "^2.0.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
+    "@mdi/font": "^7.4.47",
     "@rushstack/eslint-patch": "^1.10.3",
     "@types/node": "^20.14.8",
     "@vitejs/plugin-vue": "^5.0.5",
@@ -43,7 +47,6 @@
     "prettier": "^3.3.2",
     "typescript": "^5.5.2",
     "vite": "^5.3.1",
-    "vite-plugin-monaco-editor": "^1.1.0",
     "vue": "^3.4.30",
     "vue-tsc": "^2.0.22"
   }
