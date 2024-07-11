@@ -11,10 +11,8 @@ class ErrorNode(Node):
         return "ErrorNode"
 
 class Program(Node):
-    def __init__(self, ext_decls, fundefs, instrs):
+    def __init__(self, ext_decls):
         self.ext_decls = ext_decls
-        self.fundefs = fundefs
-        self.instrs = instrs
 
     def __repr__(self):
         return "Program"
@@ -180,12 +178,11 @@ class BreakInstruction(Node):
         return "BreakInstruction"
 
 class CompoundInstructions(Node):
-    def __init__(self, decls, instrs):
-        self.decls = decls
+    def __init__(self,  instrs):
         self.instrs = instrs
 
     def __repr__(self):
-        return f"CompoundInstructions({self.decls}, {self.instrs})"
+        return f"CompoundInstructions({self.instrs})"
 
 class Assignment(Node):
     def __init__(self, id, expr):
@@ -237,18 +234,18 @@ class Pointer(Node):
         self.id = id
 
     def __repr__(self):
-        return f"*{self.id}"
+        return f"Pointer *{self.id}"
 
 class Address(Node):
     def __init__(self, var):
         self.var = var
 
     def __repr__(self):
-        return f"&{self.var}"
+        return f"Addr &{self.var}"
 
 class Deref(Node):
     def __init__(self, var):
         self.var = var
 
     def __repr__(self):
-        return f"*{self.var}"
+        return f"Deref *{self.var}"

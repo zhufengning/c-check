@@ -28,8 +28,6 @@ class TreePrinter:
     def printTree(self, l):
         return (
             self.ext_decls.printTree(l)
-            + self.fundefs.printTree(l)
-            + self.instrs.printTree(l)
         )
 
     @addToClass(AST.BinExpr)

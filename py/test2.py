@@ -26,7 +26,7 @@ int main() {
   while (1) {
   }
 }
-
+int fff(){}
 """,
     lexer=cparser.scanner,
 )

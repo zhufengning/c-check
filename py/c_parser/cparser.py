@@ -64,8 +64,8 @@ class Cparser(object):
             pass
 
     def p_program(self, p):
-        """program : ext_declarations fundefs instructions"""
-        p[0] = Program(p[1], p[2], p[3])
+        """program : ext_declarations"""
+        p[0] = Program(p[1])
         # p[0].printTree(0)
 
     def p_ext_declarations(self, p):
@@ -235,12 +235,12 @@ class Cparser(object):
         p[0] = BreakInstruction()
 
     def p_compound_instr(self, p):
-        """compound_instr : '{' declarations instructions '}'"""
-        p[0] = CompoundInstructions(p[2], p[3])
+        """compound_instr : '{' instructions '}'"""
+        p[0] = CompoundInstructions(p[2])
 
     def p_compound_instr2(self, p):
         """compound_instr : '{' '}'"""
-        p[0] = CompoundInstructions(DeclarationList([]), InstructionList([]))
+        p[0] = CompoundInstructions(InstructionList([]))
 
     def p_condition(self, p):
         """condition : expression"""

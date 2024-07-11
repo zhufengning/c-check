@@ -33,4 +33,4 @@ int main() {
 
 from v_graph import make_graph
 
-print(make_graph(ast))
+make_graph(ast)
