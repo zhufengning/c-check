@@ -101,7 +101,7 @@ function test_draw() {
 
 async function parseFile() {
   try {
-    const res = await apiPost('scan', { filename: await window.api.chooseFolder() })
+    const res = await apiPost('scan/', { filename: await window.api.chooseFolder() })
     nodes.value = transformToTreeNodes(await res.json())
     console.log(nodes.value)
   } catch (e) {
@@ -116,7 +116,7 @@ async function openFile(node: TreeNode) {
   console.log(node.key)
 
   const cwd = (await window.api.getStatus()).cwd
-  const res = await apiPost('parse', { filepath: node.key, cwd: cwd })
+  const res = await apiPost('parse/', { filepath: node.key, cwd: cwd })
   const content = await res.json()
   editor1.setValue(content)
 }

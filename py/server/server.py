@@ -3,10 +3,20 @@ from typing import Union
 from pydantic import BaseModel
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import transaction
 import sys, os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+def getCache():
+    zconfig = "./zodb.config"
+    import ZODB.config, ZODB.FileStorage
+    db = ZODB.config.databaseFromURL(zconfig)
+    connection = db.open()
+    root = connection.root
+    return (root,db)
+
 app = FastAPI()
+
 origins = [
     "http://localhost:5173",
 ]
@@ -19,25 +29,35 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-asts = {}
-
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    root,db = getCache()
+    root.c_files = set()
+    root.asts = {}
+    root.hello = "world"
+    transaction.commit()
+    db.close()
+    return "world"
 
+@app.get("/hello")
+def read_root():
+    root,db = getCache()
+    t = root.hello
+    db.close()
+    return t
 class ReadItem(BaseModel):
     filepath: str
     cwd: str = ""
 
 @app.post("/parse/")
 def read_file(item: ReadItem):
-    with open(os.path.join(item.cwd, item.filepath), "r") as file:
+    with open(os.path.realpath(os.path.join(item.cwd, item.filepath)), "r") as file:
         text = file.read()
     return text
 
 def parse_c_file(filepath):
-    global asts
+    root,db = getCache()
     from c_parser import Cparser
     from c_parser.ply import yacc
     from c_parser import TreePrinter
@@ -50,15 +70,16 @@ def parse_c_file(filepath):
             text,
             lexer=cparser.scanner,
         )
+    asts = root.asts
     asts[filepath] = ast
+    root.asts = asts
+    transaction.commit()
+    db.close()
     return text
 
 
-c_files = set()
-
-
 def parse_headers(filename, base):
-    global c_files
+    root,db = getCache()
     pattern = r'#include\s+"([^"]+)"'
     with open(filename, "r") as file:
         text = file.read()
@@ -69,18 +90,23 @@ def parse_headers(filename, base):
         if included_headers[i].endswith(".h"):
             included_headers[i] = included_headers[i][:-2] + ".c"
         included_headers[i] = os.path.realpath(os.path.join(base, included_headers[i]))
+    c_files = root.c_files
     c_files.update(included_headers)
-    # print(included_headers)
-
+    root.c_files = c_files
+    transaction.commit()
+    print(included_headers)
+    db.close()
     return included_headers
 
 
 def check(file_path):
     # print(file_path)
-    if file_path in c_files:
+    root,db=getCache()
+    if file_path in root.c_files:
         parse_c_file(file_path)
         parse_headers(file_path, os.path.dirname(file_path))
         return True
+    db.close()
     return False
 
 
@@ -136,11 +162,27 @@ class ScanItem(BaseModel):
 
 @app.post("/scan/")
 def scan(item:ScanItem):
-    global c_files
+    root,db = getCache()
     filename = item.filename
+    c_files = root.c_files
     c_files.clear()
     c_files.add(filename)
+    root.c_files = c_files
+    transaction.commit()
+    db.close()
     folder = os.path.dirname(filename)
     parse_headers(filename, folder)
     tree_dict = directory_to_tree_dict(folder)
     return tree_dict
+
+import astwalk
+
+@app.get("/test")
+def test():
+    root,db = getCache()
+    asts = root.asts
+    db.close()
+    print(asts)
+    for ast in asts.values():
+      astwalk.walk(ast)
+    return "?"
