@@ -1,2 +1,2 @@
 def make_graph(ast):
-    ast.printTree(0)
+    print(ast.printTree(0))

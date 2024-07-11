@@ -1,4 +1,4 @@
-from ply import lex
+from .ply import lex
 
 
 class CLexer(object):
