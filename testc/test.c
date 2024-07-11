@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "lib.h"
-#define a 2
+
+unsigned x;
+
 int f() {
   f();
   return 1;

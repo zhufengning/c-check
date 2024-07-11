@@ -17,7 +17,7 @@ onMounted(async () => {
   setTimeout(() => {
     editor1 = monaco.editor.create(editor_container.value!, {
       readOnly: true,
-      language: 'c'
+      language: 'plaintext',automaticLayout: true
     })
 
     //console.log('Editor', editor1)
@@ -119,13 +119,19 @@ async function openFile(node: TreeNode) {
   const res = await apiPost('parse', { filepath: node.key, cwd: cwd })
   const content = await res.json()
   editor1.setValue(content)
-  monaco.editor.setModelLanguage(editor1.getModel()!, "")
+}
+
+const highlight = ref(false)
+function switchHighlight() {
+  if (!highlight.value) monaco.editor.setModelLanguage(editor1.getModel()!, 'c')
+  else monaco.editor.setModelLanguage(editor1.getModel()!, 'plaintext')
+  highlight.value = !highlight.value
 }
 </script>
 
 <template>
   <v-layout>
-    <v-navigation-drawer permanent>
+    <v-navigation-drawer permanent :width="300">
       <v-container>
         <v-row>
           <v-col class="d-flex flex-wrap ga-3">
@@ -153,8 +159,32 @@ async function openFile(node: TreeNode) {
       </tree>
     </v-navigation-drawer>
     <v-main>
-      <div ref="editor_container" style="height: 90vh"></div>
+      <v-row class="mx-2 my-1">
+        <v-col
+          ><v-chip @click="switchHighlight">
+            高亮：{{ highlight ? '全部' : '仅跟踪' }}
+          </v-chip></v-col
+        >
+      </v-row>
+
+      <div ref="editor_container" style="height: 90vh;"></div>
     </v-main>
+    <v-navigation-drawer permanent location="right" :width="200">
+      <v-expansion-panels  variant="accordion">
+        <v-expansion-panel title="变量">
+          <v-expansion-panel-text>
+            111<br>
+            222
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+        <v-expansion-panel title="函数">
+          <v-expansion-panel-text>
+            111<br>
+            222
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </v-navigation-drawer>
   </v-layout>
 </template>
 
