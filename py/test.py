@@ -13,7 +13,6 @@ int f() {
 int main() {
   int x = 0;
   int *y = &x;
-
   int arr[50];
   arr[0] = 1;
   arr[1] = arr[0];

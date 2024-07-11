@@ -105,7 +105,7 @@ class TreePrinter:
 
     @addToClass(AST.Init)
     def printTree(self, l):
-        return tprint(l, "=") + tprint(l + 1, self.id) + self.expr.printTree(l + 1)
+        return tprint(l, "=") + tprint(l + 1,f"{self.id} {self.pos}") + self.expr.printTree(l + 1)
 
     @addToClass(AST.ChoiceInstruction)
     def printTree(self, l):
@@ -193,7 +193,7 @@ class TreePrinter:
 
     @addToClass(AST.Address)
     def printTree(self, l):
-        return tprint(l, "&" + self.var.printTree(0))
+        return tprint(l, f"&{self.var}")
 
     @addToClass(AST.Array)
     def printTree(self, l):
