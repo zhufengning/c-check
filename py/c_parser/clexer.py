@@ -19,7 +19,7 @@ class CLexer(object):
         self.last_token = self.lexer.token()
         return self.last_token
 
-    literals = "{}()<>=;:,+-*/%&|^"
+    literals = "{}()<>=;:,+-*/%&|^[]"
 
     reserved = {
         "break": "BREAK",

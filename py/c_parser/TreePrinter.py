@@ -11,7 +11,7 @@ def addToClass(cls):
 
 
 def tprint(l, s):
-    return "| " * l + s + "\n"
+    return "| " * l + str(s) + "\n"
 
 
 class TreePrinter:
@@ -35,7 +35,7 @@ class TreePrinter:
     @addToClass(AST.BinExpr)
     def printTree(self, l):
         return (
-            tprint(l, self.op)
+            tprint(l, "Op "+self.op)
             + self.left.printTree(l + 1)
             + self.right.printTree(l + 1)
         )
@@ -56,7 +56,7 @@ class TreePrinter:
         # print 'Function call', self.params
         return (
             tprint(l, "FUNCALL ")
-            + tprint(l + 1, self.id)
+            + tprint(l + 1, self.id + ' ' +str(self.pos))
             + self.params.printTree(l + 1)
         )
 
@@ -73,7 +73,7 @@ class TreePrinter:
 
     @addToClass(AST.Variable)
     def printTree(self, l):
-        return tprint(l, self.id)
+        return tprint(l, str(self))
 
     @addToClass(AST.DeclarationList)
     def printTree(self, l):
@@ -157,7 +157,7 @@ class TreePrinter:
 
     @addToClass(AST.Assignment)
     def printTree(self, l):
-        return tprint(l, "=") + tprint(l + 1, self.id) + self.expr.printTree(l + 1)
+        return tprint(l, "Assign") + tprint(l + 1, self.id) + self.expr.printTree(l + 1)
 
     @addToClass(AST.LabeledInstruction)
     def printTree(self, l):
@@ -190,3 +190,11 @@ class TreePrinter:
             + self.fmlparams.printTree(l + 1)
             + self.body.printTree(l + 1)
         )
+
+    @addToClass(AST.Address)
+    def printTree(self, l):
+        return tprint(l, "&" + self.var.printTree(0))
+
+    @addToClass(AST.Array)
+    def printTree(self, l):
+        return tprint(l, f"Array[{self.index}]")

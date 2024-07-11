@@ -5,6 +5,7 @@
 # 4. 修复空代码块卡死
 # 5. 变量定义不再必须赋初值
 # 6. 给FUNDEF, FUNCALL和VAR添加列信息
+# 7. 指针、数组语法，取地址、解引用
 
 from .clexer import CLexer
 from .AST import *
@@ -64,12 +65,15 @@ class Cparser(object):
 
     def p_program(self, p):
         """program : ext_declarations fundefs instructions"""
-        p[0] = Program(p[1], p[2], p[3], pos(p))
+        p[0] = Program(p[1], p[2], p[3])
         # p[0].printTree(0)
 
     def p_ext_declarations(self, p):
         """ext_declarations : declarations"""
         p[0] = p[1]
+    def p_array(self, p):
+        """array : '[' INTEGER ']'"""
+        p[0] = Array(p[2])
 
     def p_declarations(self, p):
         """declarations : declarations declaration"""
@@ -111,12 +115,26 @@ class Cparser(object):
 
     def p_init(self, p):
         """init : ID '=' expression"""
-        p[0] = Init(p[1], p[3])
+        p[0] = Init(p[1], p[3], pos2(p, 1))
 
     def p_init2(self, p):
         """init : ID"""
         # print(p[1])
-        p[0] = Init(p[1], Null())
+        p[0] = Init(p[1], Null(), pos2(p, 1))
+
+    def p_init3(self, p):
+        """init : ID array"""
+        # print(p[1])
+        p[0] = Init(p[1], p[2], pos2(p, 1))
+
+    def p_init4(self, p):
+        """init : '*' ID"""
+        # print(p[1])
+        p[0] = Init(Pointer(p[2]), Null(), pos2(p, 2))
+
+    def p_init5(self, p):
+        """init : '*' ID '=' expression"""
+        p[0] = Init(Pointer(p[2]), p[4], pos2(p, 2))
 
     def p_instructions(self, p):
         """instructions : instructions instruction"""
@@ -158,7 +176,13 @@ class Cparser(object):
     def p_assignment(self, p):
         """assignment : ID '=' expression"""
         if p[3]:
-            p[0] = Assignment(p[1], p[3], pos(p))
+            p[0] = Assignment(p[1], p[3])
+        else:  # error
+            pass
+    def p_assignment_arr(self, p):
+        """assignment : ID array '=' expression"""
+        if p[3]:
+            p[0] = Assignment(Variable(p[1], pos2(p, 1), p[2]), p[4])
         else:  # error
             pass
 
@@ -200,7 +224,7 @@ class Cparser(object):
 
     def p_return_instr(self, p):
         """return_instr : RETURN expression ';'"""
-        p[0] = ReturnInstruction(p[2], pos(p))
+        p[0] = ReturnInstruction(p[2])
 
     def p_continue_instr(self, p):
         """continue_instr : CONTINUE ';'"""
@@ -242,6 +266,18 @@ class Cparser(object):
         "expression : ID"
         p[0] = Variable(p[1], pos2(p, 1))
 
+    def p_expression_id_addr(self, p):
+        "expression : '&' ID"
+        p[0] = Address(Variable(p[2], pos2(p, 2)))
+
+    def p_expression_id_deref(self, p):
+        "expression : '*' ID"
+        p[0] = Deref(Variable(p[2], pos2(p, 2)))
+
+    def p_expression_arr(self, p):
+        "expression : ID array"
+        p[0] = Variable(p[1], pos2(p, 1), p[2])
+
     def p_expression_brackets(self, p):
         "expression : '(' expression ')'"
         p[0] = p[2]
@@ -252,7 +288,7 @@ class Cparser(object):
 
     def p_expression_fun_call(self, p):
         "expression : ID '(' expr_list_or_empty ')'"
-        p[0] = FunctionCall(p[1], p[3], pos(p))
+        p[0] = FunctionCall(p[1], p[3], pos2(p, 1))
 
     def p_expression_fun_call_error(self, p):
         "expression : ID '(' error ')'"
@@ -278,7 +314,7 @@ class Cparser(object):
         | expression LE expression
         | expression GE expression"""
 
-        p[0] = BinExpr(p[1], p[2], p[3], pos(p))
+        p[0] = BinExpr(p[1], p[2], p[3])
 
     def p_expr_list_non_empty(self, p):
         """expr_list_or_empty : expr_list"""

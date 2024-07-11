@@ -11,7 +11,12 @@ int f() {
   return 1;
 }
 int main() {
-  int x[10];
+  int x = 0;
+  int *y = &x;
+
+  int arr[50];
+  arr[0] = 1;
+  arr[1] = arr[0];
   int a = 0;
   int b;
   b=(a+1)*3;

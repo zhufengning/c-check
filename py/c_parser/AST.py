@@ -29,11 +29,10 @@ class ErrorNode(Node):
 
 
 class Program(Node):
-    def __init__(self, ext_decls, fundefs, instrs, pos):
+    def __init__(self, ext_decls, fundefs, instrs):
         self.ext_decls = ext_decls
         self.fundefs = fundefs
         self.instrs = instrs
-        self.pos = pos
 
 
 class Const(Node):
@@ -54,17 +53,21 @@ class String(Const):
 
 
 class Variable(Node):
-    def __init__(self, id, pos):
+    def __init__(self, id, pos, arr=None):
         self.id = id
         self.pos = pos
+        self.arr =arr
+
+    def __str__(self):
+        #print(self.id,self.arr.index)
+        return self.id + (f"[{self.arr.index}]" if self.arr else "") + " " + str(self.pos)
 
 
 class BinExpr(Node):
-    def __init__(self, left, op, right, pos):
+    def __init__(self, left, op, right):
         self.left = left
         self.op = op
         self.right = right
-        self.pos = pos
         # sprint(left, op, right)
 
 
@@ -105,9 +108,8 @@ class PrintInstruction(Node):
 
 
 class ReturnInstruction(Node):
-    def __init__(self, expr, pos):
+    def __init__(self, expr):
         self.expr = expr
-        self.pos = pos
 
 
 class DeclarationList(Node):
@@ -128,9 +130,10 @@ class InitList(Node):
 
 
 class Init(Node):
-    def __init__(self, id, expr):
+    def __init__(self, id, expr, pos):
         self.id = id
         self.expr = expr
+        self.pos = pos
 
 
 class ChoiceInstruction(Node):
@@ -173,17 +176,15 @@ class CompoundInstructions(Node):
 
 
 class Assignment(Node):
-    def __init__(self, id, expr, pos):
+    def __init__(self, id, expr):
         self.id = id
         self.expr = expr
-        self.pos = pos
 
 
 class LabeledInstruction(Node):
     def __init__(self, kw, instr):
         self.keyword = kw
         self.instr = instr
-
 
 
 class ArgsList(Node):
@@ -200,3 +201,23 @@ class Arg(Node):
 class Null(Node):
     def __init__(self):
         pass
+
+
+class Array(Node):
+    def __init__(self, index):
+        self.index = index
+
+
+class Pointer(Node):
+    def __init__(self, id):
+        self.id = id
+    def __str__(self) -> str:
+        return "*"+self.id
+
+class Address(Node):
+    def __init__(self, var):
+        self.var = var
+
+class Deref(Node):
+    def __init__(self, var):
+        self.var = var
