@@ -17,7 +17,8 @@ onMounted(async () => {
   setTimeout(() => {
     editor1 = monaco.editor.create(editor_container.value!, {
       readOnly: true,
-      language: 'plaintext',automaticLayout: true
+      language: 'plaintext',
+      automaticLayout: true
     })
 
     //console.log('Editor', editor1)
@@ -167,19 +168,19 @@ function switchHighlight() {
         >
       </v-row>
 
-      <div ref="editor_container" style="height: 90vh;"></div>
+      <div ref="editor_container" style="height: 90vh"></div>
     </v-main>
     <v-navigation-drawer permanent location="right" :width="200">
-      <v-expansion-panels  variant="accordion">
+      <v-expansion-panels variant="accordion">
         <v-expansion-panel title="变量">
           <v-expansion-panel-text>
-            111<br>
+            111<br />
             222
           </v-expansion-panel-text>
         </v-expansion-panel>
         <v-expansion-panel title="函数">
           <v-expansion-panel-text>
-            111<br>
+            111<br />
             222
           </v-expansion-panel-text>
         </v-expansion-panel>

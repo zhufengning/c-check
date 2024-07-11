@@ -12,7 +12,7 @@ int main() {
   printf("%d", a);
   f(a + 2);
   float fuck;
-  printf("%lf", fuck);
+  sprintf("%lf scr", fuck);
   while (1) {
   }
 }

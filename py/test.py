@@ -11,6 +11,7 @@ int f() {
   return 1;
 }
 int main() {
+  int x[10];
   int a = 0;
   int b;
   b=(a+1)*3;
