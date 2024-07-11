@@ -6,6 +6,7 @@
 # 5. 变量定义不再必须赋初值
 # 6. 给FUNDEF, FUNCALL和VAR添加列信息
 # 7. 指针、数组语法，取地址、解引用
+# 8. 简化部分结构（因为decl算入了instr，不再按照块中先decl后instr的限定顺序，所以有些地方写死的decl+instr简化成了instr）
 
 from .clexer import CLexer
 from .AST import *
