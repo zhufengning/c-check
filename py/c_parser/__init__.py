@@ -1,1 +1,1 @@
-from .cparser import Cparser
+from . import Cparser
