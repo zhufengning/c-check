@@ -1,7 +1,7 @@
 import c_parser
 import c_parser.ply.yacc as yacc
 
-cparser = c_parser.Cparser.Cparser()
+cparser = c_parser.cparser.Cparser()
 parser = yacc.yacc(module=cparser)
 ast = parser.parse(
     """#include <stdio.h>
