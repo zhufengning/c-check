@@ -5,6 +5,15 @@ from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 
 def encrypt_data(folder_path, name, key, mode, data, padding_mode):
+    """_summary_
+
+    :param folder_path:路径
+    :param name: 文件名
+    :param key: 密码
+    :param mode: 模式
+    :param data: 需要加密的数据
+    :param padding_mode: _description_
+    """
     mdata = MData()
     mdata.str(data)
 
