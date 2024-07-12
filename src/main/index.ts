@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import electron, { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -9,8 +9,8 @@ let mainWindow: BrowserWindow | null
 function createWindow(): void {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 480,
+    height: 320,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -37,7 +37,7 @@ function createWindow(): void {
   } else {
     const file = join(__dirname, '../renderer/index.html')
     //console.log('file', file)
-    mainWindow.loadFile(file)
+    mainWindow.loadURL(`file://${file}`)
   }
 }
 

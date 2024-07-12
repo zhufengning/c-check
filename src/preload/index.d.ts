@@ -5,7 +5,7 @@ declare global {
     electron: ElectronAPI
     api: {
       chooseFolder: () => Promise<string>
-
+      goFullscreen: () => Promise<void>
       getStatus: () => Promise<Status>
     }
   }

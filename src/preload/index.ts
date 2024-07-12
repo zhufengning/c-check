@@ -4,7 +4,8 @@ import { electronAPI } from '@electron-toolkit/preload'
 // Custom APIs for renderer
 const api = {
   chooseFolder: () => electronAPI.ipcRenderer.invoke('choose-folder'),
-  getStatus: () => electronAPI.ipcRenderer.invoke('get-status')
+  getStatus: () => electronAPI.ipcRenderer.invoke('get-status'),
+  goFullscreen: () => electronAPI.ipcRenderer.invoke('fullscreen')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

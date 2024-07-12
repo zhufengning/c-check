@@ -11,6 +11,7 @@ let editor1: monaco.editor.IStandaloneCodeEditor
 const editor_container = ref<HTMLElement | null>(null)
 const decorations: monaco.editor.IEditorDecorationsCollection[] = []
 const router = useRouter()
+window.api.goFullscreen().then()
 onMounted(async () => {
   await router.isReady()
   await nextTick()
