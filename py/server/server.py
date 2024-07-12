@@ -186,3 +186,23 @@ def test():
     for ast in asts.values():
       astwalk.walk(ast)
     return "?"
+
+
+class User(BaseModel):
+    user: str
+    passwd: str
+@app.post("/check_user")
+def check_user(user: User):
+    from user import user_check
+    return user_check(user.user, user.passwd)
+
+
+@app.post("/create_user")
+def check_user(user: User):
+    from user import user_create
+    return user_create(user.user, user.passwd)
+
+@app.post("/delete_user")
+def check_user(user: User):
+    from user import user_delete
+    return user_delete(user.user, user.passwd)

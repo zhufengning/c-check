@@ -7,6 +7,7 @@ declare global {
       chooseFolder: () => Promise<string>
       goFullscreen: () => Promise<void>
       getStatus: () => Promise<Status>
+      setStatus: (string) => Promise<void>
     }
   }
 }

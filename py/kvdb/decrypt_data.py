@@ -39,3 +39,17 @@ def decrypt_data(folder_path, file_name, key, mode=AES.MODE_CBC, padding_mode="Z
     original_data = mdata.toString()
 
     return original_data
+
+def remove_data(folder_path, file_name, key, mode=AES.MODE_CBC, padding_mode="ZeroPadding"):
+    key = hashlib.sha256(key.encode()).digest()
+    folder_path = os.path.join(basedir, folder_path)
+
+    # 使用相同的 IV（初始化向量）
+    iv = b'\xc7\xab\xd2\xda\xa0J\xf7\xe9\x11\x16\xd3\xb7\xd2\xe4\t\x89'
+
+    # 创建AEScryptor对象用于文件名解密
+    aes_filename = AEScryptor(key, mode, iv, padding_mode)
+    encrypted_filename = aes_filename.encrypt(file_name.encode()).hex()
+    file_path = os.path.join(folder_path, encrypted_filename)
+
+    os.remove(file_path)
