@@ -1,11 +1,13 @@
-import c_parser
 import c_parser.ply.yacc as yacc
+from c_parser import AST, cparser
 
-cparser = c_parser.cparser.Cparser()
+cparser = cparser.Cparser()
 parser = yacc.yacc(module=cparser)
-ast = parser.parse(
+source1 = (
     """#include <stdio.h>
 #define a 2
+int ga, gb, gc;
+
 int f() {
   f();
   return 1;
@@ -27,16 +29,30 @@ int main() {
   }
 }
 int fff(){}
+int gy;
 """,
+)
+
+source2 = """#include "dir/dir2/d2.h";
+void lib_fun() {
+  int x;
+  x = x+1;
+}
+"""
+
+ast = parser.parse(
+    source2,
     lexer=cparser.scanner,
 )
 
-from c_parser.DFSVisitor import DFSVisitor
+from c_parser.DFSVisitor import DFSVisitorWithDepth
 
 
-class MyVisitor(DFSVisitor):
-    def fn(self, node):
-        print(node)
+class MyVisitor(DFSVisitorWithDepth):
+    def fn(self, node, depth):
+        match type(node):
+            case AST.Declaration:
+                print(depth, node)
 
 
 MyVisitor().visit(ast)

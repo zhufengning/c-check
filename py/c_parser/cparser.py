@@ -72,6 +72,7 @@ class Cparser(object):
     def p_ext_declarations(self, p):
         """ext_declarations : declarations"""
         p[0] = p[1]
+
     def p_array(self, p):
         """array : '[' INTEGER ']'"""
         p[0] = Array(p[2])
@@ -177,9 +178,10 @@ class Cparser(object):
     def p_assignment(self, p):
         """assignment : ID '=' expression"""
         if p[3]:
-            p[0] = Assignment(p[1], p[3])
+            p[0] = Assignment(Variable(p[1], pos2(p, 1)), p[3])
         else:  # error
             pass
+
     def p_assignment_arr(self, p):
         """assignment : ID array '=' expression"""
         if p[3]:
@@ -349,9 +351,9 @@ class Cparser(object):
         """fundefs : fundef"""
         p[0] = FunctionDefList([p[1]])
 
-    def p_fundefs_empty(self, p):
-        """fundefs :"""
-        p[0] = FunctionDefList([])
+    # def p_fundefs_empty(self, p):
+    #     """fundefs :"""
+    #     p[0] = FunctionDefList([])
 
     def p_fundef(self, p):
         """fundef : TYPE ID '(' args_list_or_empty ')' compound_instr"""

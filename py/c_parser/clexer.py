@@ -96,7 +96,7 @@ class CLexer(object):
     t_OR = r"\|\|"
 
     def t_TYPE(self, t):
-        r"\b(int|float|double|char|unsigned)\b"
+        r"\b(int|float|double|char|unsigned|void)\b"
         return t
 
     def t_ID(self, t):

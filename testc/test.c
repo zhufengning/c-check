@@ -9,6 +9,7 @@ int f() {
 }
 int main() {
   int a = 0;
+  x=a;
   printf("%d", a);
   f(a + 2);
   float fuck;

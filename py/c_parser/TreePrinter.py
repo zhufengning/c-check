@@ -26,14 +26,12 @@ class TreePrinter:
 
     @addToClass(AST.Program)
     def printTree(self, l):
-        return (
-            self.ext_decls.printTree(l)
-        )
+        return self.ext_decls.printTree(l)
 
     @addToClass(AST.BinExpr)
     def printTree(self, l):
         return (
-            tprint(l, "Op "+self.op)
+            tprint(l, "Op " + self.op)
             + self.left.printTree(l + 1)
             + self.right.printTree(l + 1)
         )
@@ -54,7 +52,7 @@ class TreePrinter:
         # print 'Function call', self.params
         return (
             tprint(l, "FUNCALL ")
-            + tprint(l + 1, self.id + ' ' +str(self.pos))
+            + tprint(l + 1, self.id + " " + str(self.pos))
             + self.params.printTree(l + 1)
         )
 
@@ -103,7 +101,11 @@ class TreePrinter:
 
     @addToClass(AST.Init)
     def printTree(self, l):
-        return tprint(l, "=") + tprint(l + 1,f"{self.id} {self.pos}") + self.expr.printTree(l + 1)
+        return (
+            tprint(l, "=")
+            + tprint(l + 1, f"{self.id} {self.pos}")
+            + self.expr.printTree(l + 1)
+        )
 
     @addToClass(AST.ChoiceInstruction)
     def printTree(self, l):
@@ -147,11 +149,7 @@ class TreePrinter:
 
     @addToClass(AST.CompoundInstructions)
     def printTree(self, l):
-        return (
-            tprint(l, "BLOCK")
-            + self.decls.printTree(l + 1)
-            + self.instrs.printTree(l + 1)
-        )
+        return tprint(l, "BLOCK") + self.instrs.printTree(l + 1)
 
     @addToClass(AST.Assignment)
     def printTree(self, l):

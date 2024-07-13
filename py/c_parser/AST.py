@@ -6,9 +6,11 @@ class Node(object):
     def __repr__(self):
         return f"Node at line {self.lineno}"
 
+
 class ErrorNode(Node):
     def __repr__(self):
         return "ErrorNode"
+
 
 class Program(Node):
     def __init__(self, ext_decls):
@@ -17,6 +19,7 @@ class Program(Node):
     def __repr__(self):
         return "Program"
 
+
 class Const(Node):
     def __init__(self, value):
         self.value = value
@@ -24,17 +27,21 @@ class Const(Node):
     def __repr__(self):
         return str(self.value)
 
+
 class Integer(Const):
     def __repr__(self):
         return f"Integer: {self.value}"
+
 
 class Float(Const):
     def __repr__(self):
         return f"Float: {self.value}"
 
+
 class String(Const):
     def __repr__(self):
         return f"String: {self.value}"
+
 
 class Variable(Node):
     def __init__(self, id, pos, arr=None):
@@ -43,7 +50,10 @@ class Variable(Node):
         self.arr = arr
 
     def __repr__(self):
-        return self.id + (f"[{self.arr.index}]" if self.arr else "") + " " + str(self.pos)
+        return (
+            self.id + (f"[{self.arr.index}]" if self.arr else "") + " " + str(self.pos)
+        )
+
 
 class BinExpr(Node):
     def __init__(self, left, op, right):
@@ -54,12 +64,14 @@ class BinExpr(Node):
     def __repr__(self):
         return f"BinExpr({self.left}, {self.op}, {self.right})"
 
+
 class ExprList(Node):
     def __init__(self, exprs):
         self.exprs = exprs
 
     def __repr__(self):
         return f"ExprList({self.exprs})"
+
 
 class FunctionCall(Node):
     def __init__(self, id, params, pos):
@@ -70,12 +82,14 @@ class FunctionCall(Node):
     def __repr__(self):
         return f"FunctionCall({self.id}, {self.params}, {self.pos})"
 
+
 class FunctionDefList(Node):
     def __init__(self, fundefs):
         self.fundefs = fundefs
 
     def __repr__(self):
         return f"FunctionDefList({self.fundefs})"
+
 
 class FunctionDef(Node):
     def __init__(self, rettype, name, fmlparams, body, pos):
@@ -88,12 +102,14 @@ class FunctionDef(Node):
     def __repr__(self):
         return f"FunctionDef({self.rettype}, {self.name}, {self.fmlparams}, {self.body}, {self.pos})"
 
+
 class InstructionList(Node):
     def __init__(self, instrs):
         self.instrs = instrs
 
     def __repr__(self):
         return f"InstructionList({self.instrs})"
+
 
 class ReturnInstruction(Node):
     def __init__(self, expr):
@@ -102,12 +118,14 @@ class ReturnInstruction(Node):
     def __repr__(self):
         return f"ReturnInstruction({self.expr})"
 
+
 class DeclarationList(Node):
     def __init__(self, decls):
         self.decls = decls
 
     def __repr__(self):
         return f"DeclarationList({self.decls})"
+
 
 class Declaration(Node):
     def __init__(self, type, inits, pos):
@@ -118,12 +136,14 @@ class Declaration(Node):
     def __repr__(self):
         return f"Declaration({self.type}, {self.inits}, {self.pos})"
 
+
 class InitList(Node):
     def __init__(self, inits):
         self.inits = inits
 
     def __repr__(self):
         return f"InitList({self.inits})"
+
 
 class Init(Node):
     def __init__(self, id, expr, pos):
@@ -132,7 +152,8 @@ class Init(Node):
         self.pos = pos
 
     def __repr__(self):
-        return f"Init({self.id}, {self.expr}, {self.pos})"
+        return f"Init({self.id}, {self.expr})"
+
 
 class ChoiceInstruction(Node):
     def __init__(self, cond, ithen, ielse=None):
@@ -143,6 +164,7 @@ class ChoiceInstruction(Node):
     def __repr__(self):
         return f"ChoiceInstruction({self.cond}, {self.ithen}, {self.ielse})"
 
+
 class WhileInstruction(Node):
     def __init__(self, kw, cond, instr):
         self.keyword = kw
@@ -151,6 +173,7 @@ class WhileInstruction(Node):
 
     def __repr__(self):
         return f"WhileInstruction({self.keyword}, {self.cond}, {self.instr})"
+
 
 class ForInstruction(Node):
     def __init__(self, kw, expr1, expr2, expr3, instr):
@@ -163,12 +186,14 @@ class ForInstruction(Node):
     def __repr__(self):
         return f"ForInstruction({self.keyword}, {self.expr1}, {self.expr2}, {self.expr3}, {self.instr})"
 
+
 class ContinueInstruction(Node):
     def __init__(self):
         pass
 
     def __repr__(self):
         return "ContinueInstruction"
+
 
 class BreakInstruction(Node):
     def __init__(self):
@@ -177,12 +202,14 @@ class BreakInstruction(Node):
     def __repr__(self):
         return "BreakInstruction"
 
+
 class CompoundInstructions(Node):
-    def __init__(self,  instrs):
+    def __init__(self, instrs):
         self.instrs = instrs
 
     def __repr__(self):
         return f"CompoundInstructions({self.instrs})"
+
 
 class Assignment(Node):
     def __init__(self, id, expr):
@@ -192,6 +219,7 @@ class Assignment(Node):
     def __repr__(self):
         return f"Assignment({self.id}, {self.expr})"
 
+
 class LabeledInstruction(Node):
     def __init__(self, kw, instr):
         self.keyword = kw
@@ -200,12 +228,14 @@ class LabeledInstruction(Node):
     def __repr__(self):
         return f"LabeledInstruction({self.keyword}, {self.instr})"
 
+
 class ArgsList(Node):
     def __init__(self, args):
         self.args = args
 
     def __repr__(self):
         return f"ArgsList({self.args})"
+
 
 class Arg(Node):
     def __init__(self, type, id):
@@ -215,12 +245,14 @@ class Arg(Node):
     def __repr__(self):
         return f"Arg({self.type}, {self.id})"
 
+
 class Null(Node):
     def __init__(self):
         pass
 
     def __repr__(self):
         return "Null"
+
 
 class Array(Node):
     def __init__(self, index):
@@ -229,6 +261,7 @@ class Array(Node):
     def __repr__(self):
         return f"Array[{self.index}]"
 
+
 class Pointer(Node):
     def __init__(self, id):
         self.id = id
@@ -236,12 +269,14 @@ class Pointer(Node):
     def __repr__(self):
         return f"Pointer *{self.id}"
 
+
 class Address(Node):
     def __init__(self, var):
         self.var = var
 
     def __repr__(self):
         return f"Addr &{self.var}"
+
 
 class Deref(Node):
     def __init__(self, var):

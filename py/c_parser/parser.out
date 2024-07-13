@@ -88,23 +88,22 @@ Rule 82    expr_list -> expr_list , expression
 Rule 83    expr_list -> expression
 Rule 84    fundefs -> fundefs fundef
 Rule 85    fundefs -> fundef
-Rule 86    fundefs -> <empty>
-Rule 87    fundef -> TYPE ID ( args_list_or_empty ) compound_instr
-Rule 88    args_list_or_empty -> args_list
-Rule 89    args_list_or_empty -> <empty>
-Rule 90    args_list -> args_list , arg
-Rule 91    args_list -> arg
-Rule 92    arg -> TYPE ID
+Rule 86    fundef -> TYPE ID ( args_list_or_empty ) compound_instr
+Rule 87    args_list_or_empty -> args_list
+Rule 88    args_list_or_empty -> <empty>
+Rule 89    args_list -> args_list , arg
+Rule 90    args_list -> arg
+Rule 91    arg -> TYPE ID
 
 Terminals, with rules where they appear
 
 %                    : 66
 &                    : 55 68
-(                    : 31 36 37 38 39 40 41 42 43 58 59 60 61 87
-)                    : 31 36 37 38 39 40 41 42 43 58 59 60 61 87
+(                    : 31 36 37 38 39 40 41 42 43 58 59 60 61 86
+)                    : 31 36 37 38 39 40 41 42 43 58 59 60 61 86
 *                    : 15 16 56 64
 +                    : 62
-,                    : 10 82 90
+,                    : 10 82 89
 -                    : 63
 /                    : 65
 :                    : 32
@@ -120,7 +119,7 @@ EQ                   : 74
 FLOAT                : 51
 FOR                  : 41 42
 GE                   : 79
-ID                   : 12 13 14 15 16 31 32 33 34 35 54 55 56 57 60 61 87 92
+ID                   : 12 13 14 15 16 31 32 33 34 35 54 55 56 57 60 61 86 91
 IF                   : 36 37 38 39
 INTEGER              : 3 50
 LE                   : 78
@@ -130,7 +129,7 @@ RETURN               : 44
 SHL                  : 72
 SHR                  : 73
 STRING               : 52
-TYPE                 : 8 87 92
+TYPE                 : 8 86 91
 WHILE                : 40 43
 [                    : 3
 ]                    : 3
@@ -142,14 +141,14 @@ error                : 9 35 38 39 42 43 59 61
 
 Nonterminals, with rules where they appear
 
-arg                  : 90 91
-args_list            : 88 90
-args_list_or_empty   : 87
+arg                  : 89 90
+args_list            : 87 89
+args_list_or_empty   : 86
 array                : 14 34 57
 assignment           : 20 41
 break_instr          : 26
 choice_instr         : 22
-compound_instr       : 28 87
+compound_instr       : 28 86
 condition            : 36 37 40
 const                : 53
 continue_instr       : 27
@@ -187,23 +186,16 @@ state 0
     (9) declaration -> . error ;
     (84) fundefs -> . fundefs fundef
     (85) fundefs -> . fundef
-    (86) fundefs -> .
-    (87) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
 
   ! shift/reduce conflict for TYPE resolved as shift
   ! shift/reduce conflict for error resolved as shift
-  ! shift/reduce conflict for TYPE resolved as shift
-  ! shift/reduce conflict for error resolved as shift
-  ! reduce/reduce conflict for $end resolved using rule 6 (declarations -> .)
     $end            reduce using rule 6 (declarations -> .)
     TYPE            shift and go to state 6
     error           shift and go to state 7
 
   ! TYPE            [ reduce using rule 6 (declarations -> .) ]
   ! error           [ reduce using rule 6 (declarations -> .) ]
-  ! TYPE            [ reduce using rule 86 (fundefs -> .) ]
-  ! error           [ reduce using rule 86 (fundefs -> .) ]
-  ! $end            [ reduce using rule 86 (fundefs -> .) ]
 
     program                        shift and go to state 1
     ext_declarations               shift and go to state 2
@@ -234,19 +226,11 @@ state 3
     (9) declaration -> . error ;
     (84) fundefs -> . fundefs fundef
     (85) fundefs -> . fundef
-    (86) fundefs -> .
-    (87) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
 
-  ! shift/reduce conflict for TYPE resolved as shift
-  ! shift/reduce conflict for error resolved as shift
-  ! reduce/reduce conflict for $end resolved using rule 2 (ext_declarations -> declarations .)
     $end            reduce using rule 2 (ext_declarations -> declarations .)
     TYPE            shift and go to state 6
     error           shift and go to state 7
-
-  ! TYPE            [ reduce using rule 86 (fundefs -> .) ]
-  ! error           [ reduce using rule 86 (fundefs -> .) ]
-  ! $end            [ reduce using rule 86 (fundefs -> .) ]
 
     declaration                    shift and go to state 9
     fundefs                        shift and go to state 5
@@ -265,7 +249,7 @@ state 5
 
     (7) declaration -> fundefs .
     (84) fundefs -> fundefs . fundef
-    (87) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
 
   ! shift/reduce conflict for TYPE resolved as shift
     error           reduce using rule 7 (declaration -> fundefs .)
@@ -295,7 +279,7 @@ state 5
 state 6
 
     (8) declaration -> TYPE . inits ;
-    (87) fundef -> TYPE . ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> TYPE . ID ( args_list_or_empty ) compound_instr
     (10) inits -> . inits , init
     (11) inits -> . init
     (12) init -> . ID = expression
@@ -378,7 +362,7 @@ state 10
 
 state 11
 
-    (87) fundef -> TYPE . ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> TYPE . ID ( args_list_or_empty ) compound_instr
 
     ID              shift and go to state 17
 
@@ -394,7 +378,7 @@ state 12
 
 state 13
 
-    (87) fundef -> TYPE ID . ( args_list_or_empty ) compound_instr
+    (86) fundef -> TYPE ID . ( args_list_or_empty ) compound_instr
     (12) init -> ID . = expression
     (13) init -> ID .
     (14) init -> ID . array
@@ -451,7 +435,7 @@ state 16
 
 state 17
 
-    (87) fundef -> TYPE ID . ( args_list_or_empty ) compound_instr
+    (86) fundef -> TYPE ID . ( args_list_or_empty ) compound_instr
 
     (               shift and go to state 20
 
@@ -497,14 +481,14 @@ state 19
 
 state 20
 
-    (87) fundef -> TYPE ID ( . args_list_or_empty ) compound_instr
-    (88) args_list_or_empty -> . args_list
-    (89) args_list_or_empty -> .
-    (90) args_list -> . args_list , arg
-    (91) args_list -> . arg
-    (92) arg -> . TYPE ID
+    (86) fundef -> TYPE ID ( . args_list_or_empty ) compound_instr
+    (87) args_list_or_empty -> . args_list
+    (88) args_list_or_empty -> .
+    (89) args_list -> . args_list , arg
+    (90) args_list -> . arg
+    (91) arg -> . TYPE ID
 
-    )               reduce using rule 89 (args_list_or_empty -> .)
+    )               reduce using rule 88 (args_list_or_empty -> .)
     TYPE            shift and go to state 27
 
     args_list_or_empty             shift and go to state 28
@@ -605,33 +589,33 @@ state 26
 
 state 27
 
-    (92) arg -> TYPE . ID
+    (91) arg -> TYPE . ID
 
     ID              shift and go to state 42
 
 
 state 28
 
-    (87) fundef -> TYPE ID ( args_list_or_empty . ) compound_instr
+    (86) fundef -> TYPE ID ( args_list_or_empty . ) compound_instr
 
     )               shift and go to state 43
 
 
 state 29
 
-    (88) args_list_or_empty -> args_list .
-    (90) args_list -> args_list . , arg
+    (87) args_list_or_empty -> args_list .
+    (89) args_list -> args_list . , arg
 
-    )               reduce using rule 88 (args_list_or_empty -> args_list .)
+    )               reduce using rule 87 (args_list_or_empty -> args_list .)
     ,               shift and go to state 44
 
 
 state 30
 
-    (91) args_list -> arg .
+    (90) args_list -> arg .
 
-    ,               reduce using rule 91 (args_list -> arg .)
-    )               reduce using rule 91 (args_list -> arg .)
+    ,               reduce using rule 90 (args_list -> arg .)
+    )               reduce using rule 90 (args_list -> arg .)
 
 
 state 31
@@ -935,15 +919,15 @@ state 41
 
 state 42
 
-    (92) arg -> TYPE ID .
+    (91) arg -> TYPE ID .
 
-    ,               reduce using rule 92 (arg -> TYPE ID .)
-    )               reduce using rule 92 (arg -> TYPE ID .)
+    ,               reduce using rule 91 (arg -> TYPE ID .)
+    )               reduce using rule 91 (arg -> TYPE ID .)
 
 
 state 43
 
-    (87) fundef -> TYPE ID ( args_list_or_empty ) . compound_instr
+    (86) fundef -> TYPE ID ( args_list_or_empty ) . compound_instr
     (47) compound_instr -> . { instructions }
     (48) compound_instr -> . { }
 
@@ -953,8 +937,8 @@ state 43
 
 state 44
 
-    (90) args_list -> args_list , . arg
-    (92) arg -> . TYPE ID
+    (89) args_list -> args_list , . arg
+    (91) arg -> . TYPE ID
 
     TYPE            shift and go to state 27
 
@@ -2029,27 +2013,27 @@ state 70
 
 state 71
 
-    (87) fundef -> TYPE ID ( args_list_or_empty ) compound_instr .
+    (86) fundef -> TYPE ID ( args_list_or_empty ) compound_instr .
 
-    TYPE            reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    error           reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    $end            reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    }               reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    ID              reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    IF              reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    WHILE           reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    FOR             reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    RETURN          reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    BREAK           reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    CONTINUE        reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    {               reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    &               reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    *               reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    (               reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    INTEGER         reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    FLOAT           reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    STRING          reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
-    ELSE            reduce using rule 87 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    TYPE            reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    error           reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    $end            reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    }               reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    ID              reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    IF              reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    WHILE           reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    FOR             reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    RETURN          reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    BREAK           reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    CONTINUE        reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    {               reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    &               reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    *               reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    (               reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    INTEGER         reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    FLOAT           reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    STRING          reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
+    ELSE            reduce using rule 86 (fundef -> TYPE ID ( args_list_or_empty ) compound_instr .)
 
 
 state 72
@@ -2120,29 +2104,11 @@ state 72
     (79) expression -> . expression GE expression
     (84) fundefs -> . fundefs fundef
     (85) fundefs -> . fundef
-    (86) fundefs -> .
     (50) const -> . INTEGER
     (51) const -> . FLOAT
     (52) const -> . STRING
-    (87) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
 
-  ! shift/reduce conflict for TYPE resolved as shift
-  ! shift/reduce conflict for } resolved as shift
-  ! shift/reduce conflict for ID resolved as shift
-  ! shift/reduce conflict for error resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
-  ! shift/reduce conflict for FOR resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for BREAK resolved as shift
-  ! shift/reduce conflict for CONTINUE resolved as shift
-  ! shift/reduce conflict for { resolved as shift
-  ! shift/reduce conflict for & resolved as shift
-  ! shift/reduce conflict for * resolved as shift
-  ! shift/reduce conflict for ( resolved as shift
-  ! shift/reduce conflict for INTEGER resolved as shift
-  ! shift/reduce conflict for FLOAT resolved as shift
-  ! shift/reduce conflict for STRING resolved as shift
     }               shift and go to state 99
     ID              shift and go to state 113
     TYPE            shift and go to state 6
@@ -2160,24 +2126,6 @@ state 72
     INTEGER         shift and go to state 37
     FLOAT           shift and go to state 38
     STRING          shift and go to state 39
-
-  ! TYPE            [ reduce using rule 86 (fundefs -> .) ]
-  ! }               [ reduce using rule 86 (fundefs -> .) ]
-  ! ID              [ reduce using rule 86 (fundefs -> .) ]
-  ! error           [ reduce using rule 86 (fundefs -> .) ]
-  ! IF              [ reduce using rule 86 (fundefs -> .) ]
-  ! WHILE           [ reduce using rule 86 (fundefs -> .) ]
-  ! FOR             [ reduce using rule 86 (fundefs -> .) ]
-  ! RETURN          [ reduce using rule 86 (fundefs -> .) ]
-  ! BREAK           [ reduce using rule 86 (fundefs -> .) ]
-  ! CONTINUE        [ reduce using rule 86 (fundefs -> .) ]
-  ! {               [ reduce using rule 86 (fundefs -> .) ]
-  ! &               [ reduce using rule 86 (fundefs -> .) ]
-  ! *               [ reduce using rule 86 (fundefs -> .) ]
-  ! (               [ reduce using rule 86 (fundefs -> .) ]
-  ! INTEGER         [ reduce using rule 86 (fundefs -> .) ]
-  ! FLOAT           [ reduce using rule 86 (fundefs -> .) ]
-  ! STRING          [ reduce using rule 86 (fundefs -> .) ]
 
     instructions                   shift and go to state 98
     instruction                    shift and go to state 100
@@ -2199,10 +2147,10 @@ state 72
 
 state 73
 
-    (90) args_list -> args_list , arg .
+    (89) args_list -> args_list , arg .
 
-    ,               reduce using rule 90 (args_list -> args_list , arg .)
-    )               reduce using rule 90 (args_list -> args_list , arg .)
+    ,               reduce using rule 89 (args_list -> args_list , arg .)
+    )               reduce using rule 89 (args_list -> args_list , arg .)
 
 
 state 74
@@ -3544,29 +3492,11 @@ state 98
     (79) expression -> . expression GE expression
     (84) fundefs -> . fundefs fundef
     (85) fundefs -> . fundef
-    (86) fundefs -> .
     (50) const -> . INTEGER
     (51) const -> . FLOAT
     (52) const -> . STRING
-    (87) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
 
-  ! shift/reduce conflict for TYPE resolved as shift
-  ! shift/reduce conflict for } resolved as shift
-  ! shift/reduce conflict for ID resolved as shift
-  ! shift/reduce conflict for error resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
-  ! shift/reduce conflict for FOR resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for BREAK resolved as shift
-  ! shift/reduce conflict for CONTINUE resolved as shift
-  ! shift/reduce conflict for { resolved as shift
-  ! shift/reduce conflict for & resolved as shift
-  ! shift/reduce conflict for * resolved as shift
-  ! shift/reduce conflict for ( resolved as shift
-  ! shift/reduce conflict for INTEGER resolved as shift
-  ! shift/reduce conflict for FLOAT resolved as shift
-  ! shift/reduce conflict for STRING resolved as shift
     }               shift and go to state 123
     ID              shift and go to state 113
     TYPE            shift and go to state 6
@@ -3584,24 +3514,6 @@ state 98
     INTEGER         shift and go to state 37
     FLOAT           shift and go to state 38
     STRING          shift and go to state 39
-
-  ! TYPE            [ reduce using rule 86 (fundefs -> .) ]
-  ! }               [ reduce using rule 86 (fundefs -> .) ]
-  ! ID              [ reduce using rule 86 (fundefs -> .) ]
-  ! error           [ reduce using rule 86 (fundefs -> .) ]
-  ! IF              [ reduce using rule 86 (fundefs -> .) ]
-  ! WHILE           [ reduce using rule 86 (fundefs -> .) ]
-  ! FOR             [ reduce using rule 86 (fundefs -> .) ]
-  ! RETURN          [ reduce using rule 86 (fundefs -> .) ]
-  ! BREAK           [ reduce using rule 86 (fundefs -> .) ]
-  ! CONTINUE        [ reduce using rule 86 (fundefs -> .) ]
-  ! {               [ reduce using rule 86 (fundefs -> .) ]
-  ! &               [ reduce using rule 86 (fundefs -> .) ]
-  ! *               [ reduce using rule 86 (fundefs -> .) ]
-  ! (               [ reduce using rule 86 (fundefs -> .) ]
-  ! INTEGER         [ reduce using rule 86 (fundefs -> .) ]
-  ! FLOAT           [ reduce using rule 86 (fundefs -> .) ]
-  ! STRING          [ reduce using rule 86 (fundefs -> .) ]
 
     instruction                    shift and go to state 124
     labeled_instr                  shift and go to state 101
@@ -4342,28 +4254,11 @@ state 127
     (79) expression -> . expression GE expression
     (84) fundefs -> . fundefs fundef
     (85) fundefs -> . fundef
-    (86) fundefs -> .
     (50) const -> . INTEGER
     (51) const -> . FLOAT
     (52) const -> . STRING
-    (87) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
 
-  ! shift/reduce conflict for TYPE resolved as shift
-  ! shift/reduce conflict for ID resolved as shift
-  ! shift/reduce conflict for error resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
-  ! shift/reduce conflict for FOR resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for BREAK resolved as shift
-  ! shift/reduce conflict for CONTINUE resolved as shift
-  ! shift/reduce conflict for { resolved as shift
-  ! shift/reduce conflict for & resolved as shift
-  ! shift/reduce conflict for * resolved as shift
-  ! shift/reduce conflict for ( resolved as shift
-  ! shift/reduce conflict for INTEGER resolved as shift
-  ! shift/reduce conflict for FLOAT resolved as shift
-  ! shift/reduce conflict for STRING resolved as shift
     ID              shift and go to state 113
     TYPE            shift and go to state 6
     error           shift and go to state 7
@@ -4377,28 +4272,9 @@ state 127
     &               shift and go to state 34
     *               shift and go to state 35
     (               shift and go to state 36
-    }               reduce using rule 86 (fundefs -> .)
-    ELSE            reduce using rule 86 (fundefs -> .)
     INTEGER         shift and go to state 37
     FLOAT           shift and go to state 38
     STRING          shift and go to state 39
-
-  ! TYPE            [ reduce using rule 86 (fundefs -> .) ]
-  ! ID              [ reduce using rule 86 (fundefs -> .) ]
-  ! error           [ reduce using rule 86 (fundefs -> .) ]
-  ! IF              [ reduce using rule 86 (fundefs -> .) ]
-  ! WHILE           [ reduce using rule 86 (fundefs -> .) ]
-  ! FOR             [ reduce using rule 86 (fundefs -> .) ]
-  ! RETURN          [ reduce using rule 86 (fundefs -> .) ]
-  ! BREAK           [ reduce using rule 86 (fundefs -> .) ]
-  ! CONTINUE        [ reduce using rule 86 (fundefs -> .) ]
-  ! {               [ reduce using rule 86 (fundefs -> .) ]
-  ! &               [ reduce using rule 86 (fundefs -> .) ]
-  ! *               [ reduce using rule 86 (fundefs -> .) ]
-  ! (               [ reduce using rule 86 (fundefs -> .) ]
-  ! INTEGER         [ reduce using rule 86 (fundefs -> .) ]
-  ! FLOAT           [ reduce using rule 86 (fundefs -> .) ]
-  ! STRING          [ reduce using rule 86 (fundefs -> .) ]
 
     instruction                    shift and go to state 138
     labeled_instr                  shift and go to state 101
@@ -4712,20 +4588,11 @@ state 133
     (79) expression -> . expression GE expression
     (84) fundefs -> . fundefs fundef
     (85) fundefs -> . fundef
-    (86) fundefs -> .
     (50) const -> . INTEGER
     (51) const -> . FLOAT
     (52) const -> . STRING
-    (87) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
 
-  ! shift/reduce conflict for TYPE resolved as shift
-  ! shift/reduce conflict for ID resolved as shift
-  ! shift/reduce conflict for & resolved as shift
-  ! shift/reduce conflict for * resolved as shift
-  ! shift/reduce conflict for ( resolved as shift
-  ! shift/reduce conflict for INTEGER resolved as shift
-  ! shift/reduce conflict for FLOAT resolved as shift
-  ! shift/reduce conflict for STRING resolved as shift
     error           shift and go to state 149
     ID              shift and go to state 113
     TYPE            shift and go to state 6
@@ -4742,15 +4609,6 @@ state 133
     INTEGER         shift and go to state 37
     FLOAT           shift and go to state 38
     STRING          shift and go to state 39
-
-  ! TYPE            [ reduce using rule 86 (fundefs -> .) ]
-  ! ID              [ reduce using rule 86 (fundefs -> .) ]
-  ! &               [ reduce using rule 86 (fundefs -> .) ]
-  ! *               [ reduce using rule 86 (fundefs -> .) ]
-  ! (               [ reduce using rule 86 (fundefs -> .) ]
-  ! INTEGER         [ reduce using rule 86 (fundefs -> .) ]
-  ! FLOAT           [ reduce using rule 86 (fundefs -> .) ]
-  ! STRING          [ reduce using rule 86 (fundefs -> .) ]
 
     instruction                    shift and go to state 148
     expression                     shift and go to state 112
@@ -5330,28 +5188,11 @@ state 154
     (79) expression -> . expression GE expression
     (84) fundefs -> . fundefs fundef
     (85) fundefs -> . fundef
-    (86) fundefs -> .
     (50) const -> . INTEGER
     (51) const -> . FLOAT
     (52) const -> . STRING
-    (87) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
 
-  ! shift/reduce conflict for TYPE resolved as shift
-  ! shift/reduce conflict for ID resolved as shift
-  ! shift/reduce conflict for error resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
-  ! shift/reduce conflict for FOR resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for BREAK resolved as shift
-  ! shift/reduce conflict for CONTINUE resolved as shift
-  ! shift/reduce conflict for { resolved as shift
-  ! shift/reduce conflict for & resolved as shift
-  ! shift/reduce conflict for * resolved as shift
-  ! shift/reduce conflict for ( resolved as shift
-  ! shift/reduce conflict for INTEGER resolved as shift
-  ! shift/reduce conflict for FLOAT resolved as shift
-  ! shift/reduce conflict for STRING resolved as shift
     ID              shift and go to state 113
     TYPE            shift and go to state 6
     error           shift and go to state 7
@@ -5365,28 +5206,9 @@ state 154
     &               shift and go to state 34
     *               shift and go to state 35
     (               shift and go to state 36
-    }               reduce using rule 86 (fundefs -> .)
-    ELSE            reduce using rule 86 (fundefs -> .)
     INTEGER         shift and go to state 37
     FLOAT           shift and go to state 38
     STRING          shift and go to state 39
-
-  ! TYPE            [ reduce using rule 86 (fundefs -> .) ]
-  ! ID              [ reduce using rule 86 (fundefs -> .) ]
-  ! error           [ reduce using rule 86 (fundefs -> .) ]
-  ! IF              [ reduce using rule 86 (fundefs -> .) ]
-  ! WHILE           [ reduce using rule 86 (fundefs -> .) ]
-  ! FOR             [ reduce using rule 86 (fundefs -> .) ]
-  ! RETURN          [ reduce using rule 86 (fundefs -> .) ]
-  ! BREAK           [ reduce using rule 86 (fundefs -> .) ]
-  ! CONTINUE        [ reduce using rule 86 (fundefs -> .) ]
-  ! {               [ reduce using rule 86 (fundefs -> .) ]
-  ! &               [ reduce using rule 86 (fundefs -> .) ]
-  ! *               [ reduce using rule 86 (fundefs -> .) ]
-  ! (               [ reduce using rule 86 (fundefs -> .) ]
-  ! INTEGER         [ reduce using rule 86 (fundefs -> .) ]
-  ! FLOAT           [ reduce using rule 86 (fundefs -> .) ]
-  ! STRING          [ reduce using rule 86 (fundefs -> .) ]
 
     instruction                    shift and go to state 161
     labeled_instr                  shift and go to state 101
@@ -5471,28 +5293,11 @@ state 155
     (79) expression -> . expression GE expression
     (84) fundefs -> . fundefs fundef
     (85) fundefs -> . fundef
-    (86) fundefs -> .
     (50) const -> . INTEGER
     (51) const -> . FLOAT
     (52) const -> . STRING
-    (87) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
 
-  ! shift/reduce conflict for TYPE resolved as shift
-  ! shift/reduce conflict for ID resolved as shift
-  ! shift/reduce conflict for error resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
-  ! shift/reduce conflict for FOR resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for BREAK resolved as shift
-  ! shift/reduce conflict for CONTINUE resolved as shift
-  ! shift/reduce conflict for { resolved as shift
-  ! shift/reduce conflict for & resolved as shift
-  ! shift/reduce conflict for * resolved as shift
-  ! shift/reduce conflict for ( resolved as shift
-  ! shift/reduce conflict for INTEGER resolved as shift
-  ! shift/reduce conflict for FLOAT resolved as shift
-  ! shift/reduce conflict for STRING resolved as shift
     ID              shift and go to state 113
     TYPE            shift and go to state 6
     error           shift and go to state 7
@@ -5506,28 +5311,9 @@ state 155
     &               shift and go to state 34
     *               shift and go to state 35
     (               shift and go to state 36
-    }               reduce using rule 86 (fundefs -> .)
-    ELSE            reduce using rule 86 (fundefs -> .)
     INTEGER         shift and go to state 37
     FLOAT           shift and go to state 38
     STRING          shift and go to state 39
-
-  ! TYPE            [ reduce using rule 86 (fundefs -> .) ]
-  ! ID              [ reduce using rule 86 (fundefs -> .) ]
-  ! error           [ reduce using rule 86 (fundefs -> .) ]
-  ! IF              [ reduce using rule 86 (fundefs -> .) ]
-  ! WHILE           [ reduce using rule 86 (fundefs -> .) ]
-  ! FOR             [ reduce using rule 86 (fundefs -> .) ]
-  ! RETURN          [ reduce using rule 86 (fundefs -> .) ]
-  ! BREAK           [ reduce using rule 86 (fundefs -> .) ]
-  ! CONTINUE        [ reduce using rule 86 (fundefs -> .) ]
-  ! {               [ reduce using rule 86 (fundefs -> .) ]
-  ! &               [ reduce using rule 86 (fundefs -> .) ]
-  ! *               [ reduce using rule 86 (fundefs -> .) ]
-  ! (               [ reduce using rule 86 (fundefs -> .) ]
-  ! INTEGER         [ reduce using rule 86 (fundefs -> .) ]
-  ! FLOAT           [ reduce using rule 86 (fundefs -> .) ]
-  ! STRING          [ reduce using rule 86 (fundefs -> .) ]
 
     instruction                    shift and go to state 162
     labeled_instr                  shift and go to state 101
@@ -5611,28 +5397,11 @@ state 156
     (79) expression -> . expression GE expression
     (84) fundefs -> . fundefs fundef
     (85) fundefs -> . fundef
-    (86) fundefs -> .
     (50) const -> . INTEGER
     (51) const -> . FLOAT
     (52) const -> . STRING
-    (87) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
 
-  ! shift/reduce conflict for TYPE resolved as shift
-  ! shift/reduce conflict for ID resolved as shift
-  ! shift/reduce conflict for error resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
-  ! shift/reduce conflict for FOR resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for BREAK resolved as shift
-  ! shift/reduce conflict for CONTINUE resolved as shift
-  ! shift/reduce conflict for { resolved as shift
-  ! shift/reduce conflict for & resolved as shift
-  ! shift/reduce conflict for * resolved as shift
-  ! shift/reduce conflict for ( resolved as shift
-  ! shift/reduce conflict for INTEGER resolved as shift
-  ! shift/reduce conflict for FLOAT resolved as shift
-  ! shift/reduce conflict for STRING resolved as shift
     ID              shift and go to state 113
     TYPE            shift and go to state 6
     error           shift and go to state 7
@@ -5646,28 +5415,9 @@ state 156
     &               shift and go to state 34
     *               shift and go to state 35
     (               shift and go to state 36
-    }               reduce using rule 86 (fundefs -> .)
-    ELSE            reduce using rule 86 (fundefs -> .)
     INTEGER         shift and go to state 37
     FLOAT           shift and go to state 38
     STRING          shift and go to state 39
-
-  ! TYPE            [ reduce using rule 86 (fundefs -> .) ]
-  ! ID              [ reduce using rule 86 (fundefs -> .) ]
-  ! error           [ reduce using rule 86 (fundefs -> .) ]
-  ! IF              [ reduce using rule 86 (fundefs -> .) ]
-  ! WHILE           [ reduce using rule 86 (fundefs -> .) ]
-  ! FOR             [ reduce using rule 86 (fundefs -> .) ]
-  ! RETURN          [ reduce using rule 86 (fundefs -> .) ]
-  ! BREAK           [ reduce using rule 86 (fundefs -> .) ]
-  ! CONTINUE        [ reduce using rule 86 (fundefs -> .) ]
-  ! {               [ reduce using rule 86 (fundefs -> .) ]
-  ! &               [ reduce using rule 86 (fundefs -> .) ]
-  ! *               [ reduce using rule 86 (fundefs -> .) ]
-  ! (               [ reduce using rule 86 (fundefs -> .) ]
-  ! INTEGER         [ reduce using rule 86 (fundefs -> .) ]
-  ! FLOAT           [ reduce using rule 86 (fundefs -> .) ]
-  ! STRING          [ reduce using rule 86 (fundefs -> .) ]
 
     instruction                    shift and go to state 163
     labeled_instr                  shift and go to state 101
@@ -5751,28 +5501,11 @@ state 157
     (79) expression -> . expression GE expression
     (84) fundefs -> . fundefs fundef
     (85) fundefs -> . fundef
-    (86) fundefs -> .
     (50) const -> . INTEGER
     (51) const -> . FLOAT
     (52) const -> . STRING
-    (87) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
 
-  ! shift/reduce conflict for TYPE resolved as shift
-  ! shift/reduce conflict for ID resolved as shift
-  ! shift/reduce conflict for error resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
-  ! shift/reduce conflict for FOR resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for BREAK resolved as shift
-  ! shift/reduce conflict for CONTINUE resolved as shift
-  ! shift/reduce conflict for { resolved as shift
-  ! shift/reduce conflict for & resolved as shift
-  ! shift/reduce conflict for * resolved as shift
-  ! shift/reduce conflict for ( resolved as shift
-  ! shift/reduce conflict for INTEGER resolved as shift
-  ! shift/reduce conflict for FLOAT resolved as shift
-  ! shift/reduce conflict for STRING resolved as shift
     ID              shift and go to state 113
     TYPE            shift and go to state 6
     error           shift and go to state 7
@@ -5786,28 +5519,9 @@ state 157
     &               shift and go to state 34
     *               shift and go to state 35
     (               shift and go to state 36
-    }               reduce using rule 86 (fundefs -> .)
-    ELSE            reduce using rule 86 (fundefs -> .)
     INTEGER         shift and go to state 37
     FLOAT           shift and go to state 38
     STRING          shift and go to state 39
-
-  ! TYPE            [ reduce using rule 86 (fundefs -> .) ]
-  ! ID              [ reduce using rule 86 (fundefs -> .) ]
-  ! error           [ reduce using rule 86 (fundefs -> .) ]
-  ! IF              [ reduce using rule 86 (fundefs -> .) ]
-  ! WHILE           [ reduce using rule 86 (fundefs -> .) ]
-  ! FOR             [ reduce using rule 86 (fundefs -> .) ]
-  ! RETURN          [ reduce using rule 86 (fundefs -> .) ]
-  ! BREAK           [ reduce using rule 86 (fundefs -> .) ]
-  ! CONTINUE        [ reduce using rule 86 (fundefs -> .) ]
-  ! {               [ reduce using rule 86 (fundefs -> .) ]
-  ! &               [ reduce using rule 86 (fundefs -> .) ]
-  ! *               [ reduce using rule 86 (fundefs -> .) ]
-  ! (               [ reduce using rule 86 (fundefs -> .) ]
-  ! INTEGER         [ reduce using rule 86 (fundefs -> .) ]
-  ! FLOAT           [ reduce using rule 86 (fundefs -> .) ]
-  ! STRING          [ reduce using rule 86 (fundefs -> .) ]
 
     instruction                    shift and go to state 164
     labeled_instr                  shift and go to state 101
@@ -5934,28 +5648,11 @@ state 159
     (79) expression -> . expression GE expression
     (84) fundefs -> . fundefs fundef
     (85) fundefs -> . fundef
-    (86) fundefs -> .
     (50) const -> . INTEGER
     (51) const -> . FLOAT
     (52) const -> . STRING
-    (87) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
 
-  ! shift/reduce conflict for TYPE resolved as shift
-  ! shift/reduce conflict for ID resolved as shift
-  ! shift/reduce conflict for error resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
-  ! shift/reduce conflict for FOR resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for BREAK resolved as shift
-  ! shift/reduce conflict for CONTINUE resolved as shift
-  ! shift/reduce conflict for { resolved as shift
-  ! shift/reduce conflict for & resolved as shift
-  ! shift/reduce conflict for * resolved as shift
-  ! shift/reduce conflict for ( resolved as shift
-  ! shift/reduce conflict for INTEGER resolved as shift
-  ! shift/reduce conflict for FLOAT resolved as shift
-  ! shift/reduce conflict for STRING resolved as shift
     ID              shift and go to state 113
     TYPE            shift and go to state 6
     error           shift and go to state 7
@@ -5969,28 +5666,9 @@ state 159
     &               shift and go to state 34
     *               shift and go to state 35
     (               shift and go to state 36
-    }               reduce using rule 86 (fundefs -> .)
-    ELSE            reduce using rule 86 (fundefs -> .)
     INTEGER         shift and go to state 37
     FLOAT           shift and go to state 38
     STRING          shift and go to state 39
-
-  ! TYPE            [ reduce using rule 86 (fundefs -> .) ]
-  ! ID              [ reduce using rule 86 (fundefs -> .) ]
-  ! error           [ reduce using rule 86 (fundefs -> .) ]
-  ! IF              [ reduce using rule 86 (fundefs -> .) ]
-  ! WHILE           [ reduce using rule 86 (fundefs -> .) ]
-  ! FOR             [ reduce using rule 86 (fundefs -> .) ]
-  ! RETURN          [ reduce using rule 86 (fundefs -> .) ]
-  ! BREAK           [ reduce using rule 86 (fundefs -> .) ]
-  ! CONTINUE        [ reduce using rule 86 (fundefs -> .) ]
-  ! {               [ reduce using rule 86 (fundefs -> .) ]
-  ! &               [ reduce using rule 86 (fundefs -> .) ]
-  ! *               [ reduce using rule 86 (fundefs -> .) ]
-  ! (               [ reduce using rule 86 (fundefs -> .) ]
-  ! INTEGER         [ reduce using rule 86 (fundefs -> .) ]
-  ! FLOAT           [ reduce using rule 86 (fundefs -> .) ]
-  ! STRING          [ reduce using rule 86 (fundefs -> .) ]
 
     instruction                    shift and go to state 166
     labeled_instr                  shift and go to state 101
@@ -6235,28 +5913,11 @@ state 167
     (79) expression -> . expression GE expression
     (84) fundefs -> . fundefs fundef
     (85) fundefs -> . fundef
-    (86) fundefs -> .
     (50) const -> . INTEGER
     (51) const -> . FLOAT
     (52) const -> . STRING
-    (87) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
 
-  ! shift/reduce conflict for TYPE resolved as shift
-  ! shift/reduce conflict for ID resolved as shift
-  ! shift/reduce conflict for error resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
-  ! shift/reduce conflict for FOR resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for BREAK resolved as shift
-  ! shift/reduce conflict for CONTINUE resolved as shift
-  ! shift/reduce conflict for { resolved as shift
-  ! shift/reduce conflict for & resolved as shift
-  ! shift/reduce conflict for * resolved as shift
-  ! shift/reduce conflict for ( resolved as shift
-  ! shift/reduce conflict for INTEGER resolved as shift
-  ! shift/reduce conflict for FLOAT resolved as shift
-  ! shift/reduce conflict for STRING resolved as shift
     ID              shift and go to state 113
     TYPE            shift and go to state 6
     error           shift and go to state 7
@@ -6270,28 +5931,9 @@ state 167
     &               shift and go to state 34
     *               shift and go to state 35
     (               shift and go to state 36
-    }               reduce using rule 86 (fundefs -> .)
-    ELSE            reduce using rule 86 (fundefs -> .)
     INTEGER         shift and go to state 37
     FLOAT           shift and go to state 38
     STRING          shift and go to state 39
-
-  ! TYPE            [ reduce using rule 86 (fundefs -> .) ]
-  ! ID              [ reduce using rule 86 (fundefs -> .) ]
-  ! error           [ reduce using rule 86 (fundefs -> .) ]
-  ! IF              [ reduce using rule 86 (fundefs -> .) ]
-  ! WHILE           [ reduce using rule 86 (fundefs -> .) ]
-  ! FOR             [ reduce using rule 86 (fundefs -> .) ]
-  ! RETURN          [ reduce using rule 86 (fundefs -> .) ]
-  ! BREAK           [ reduce using rule 86 (fundefs -> .) ]
-  ! CONTINUE        [ reduce using rule 86 (fundefs -> .) ]
-  ! {               [ reduce using rule 86 (fundefs -> .) ]
-  ! &               [ reduce using rule 86 (fundefs -> .) ]
-  ! *               [ reduce using rule 86 (fundefs -> .) ]
-  ! (               [ reduce using rule 86 (fundefs -> .) ]
-  ! INTEGER         [ reduce using rule 86 (fundefs -> .) ]
-  ! FLOAT           [ reduce using rule 86 (fundefs -> .) ]
-  ! STRING          [ reduce using rule 86 (fundefs -> .) ]
 
     instruction                    shift and go to state 171
     labeled_instr                  shift and go to state 101
@@ -6375,28 +6017,11 @@ state 168
     (79) expression -> . expression GE expression
     (84) fundefs -> . fundefs fundef
     (85) fundefs -> . fundef
-    (86) fundefs -> .
     (50) const -> . INTEGER
     (51) const -> . FLOAT
     (52) const -> . STRING
-    (87) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
 
-  ! shift/reduce conflict for TYPE resolved as shift
-  ! shift/reduce conflict for ID resolved as shift
-  ! shift/reduce conflict for error resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
-  ! shift/reduce conflict for FOR resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for BREAK resolved as shift
-  ! shift/reduce conflict for CONTINUE resolved as shift
-  ! shift/reduce conflict for { resolved as shift
-  ! shift/reduce conflict for & resolved as shift
-  ! shift/reduce conflict for * resolved as shift
-  ! shift/reduce conflict for ( resolved as shift
-  ! shift/reduce conflict for INTEGER resolved as shift
-  ! shift/reduce conflict for FLOAT resolved as shift
-  ! shift/reduce conflict for STRING resolved as shift
     ID              shift and go to state 113
     TYPE            shift and go to state 6
     error           shift and go to state 7
@@ -6410,28 +6035,9 @@ state 168
     &               shift and go to state 34
     *               shift and go to state 35
     (               shift and go to state 36
-    }               reduce using rule 86 (fundefs -> .)
-    ELSE            reduce using rule 86 (fundefs -> .)
     INTEGER         shift and go to state 37
     FLOAT           shift and go to state 38
     STRING          shift and go to state 39
-
-  ! TYPE            [ reduce using rule 86 (fundefs -> .) ]
-  ! ID              [ reduce using rule 86 (fundefs -> .) ]
-  ! error           [ reduce using rule 86 (fundefs -> .) ]
-  ! IF              [ reduce using rule 86 (fundefs -> .) ]
-  ! WHILE           [ reduce using rule 86 (fundefs -> .) ]
-  ! FOR             [ reduce using rule 86 (fundefs -> .) ]
-  ! RETURN          [ reduce using rule 86 (fundefs -> .) ]
-  ! BREAK           [ reduce using rule 86 (fundefs -> .) ]
-  ! CONTINUE        [ reduce using rule 86 (fundefs -> .) ]
-  ! {               [ reduce using rule 86 (fundefs -> .) ]
-  ! &               [ reduce using rule 86 (fundefs -> .) ]
-  ! *               [ reduce using rule 86 (fundefs -> .) ]
-  ! (               [ reduce using rule 86 (fundefs -> .) ]
-  ! INTEGER         [ reduce using rule 86 (fundefs -> .) ]
-  ! FLOAT           [ reduce using rule 86 (fundefs -> .) ]
-  ! STRING          [ reduce using rule 86 (fundefs -> .) ]
 
     instruction                    shift and go to state 172
     labeled_instr                  shift and go to state 101
@@ -6582,28 +6188,11 @@ state 173
     (79) expression -> . expression GE expression
     (84) fundefs -> . fundefs fundef
     (85) fundefs -> . fundef
-    (86) fundefs -> .
     (50) const -> . INTEGER
     (51) const -> . FLOAT
     (52) const -> . STRING
-    (87) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
+    (86) fundef -> . TYPE ID ( args_list_or_empty ) compound_instr
 
-  ! shift/reduce conflict for TYPE resolved as shift
-  ! shift/reduce conflict for ID resolved as shift
-  ! shift/reduce conflict for error resolved as shift
-  ! shift/reduce conflict for IF resolved as shift
-  ! shift/reduce conflict for WHILE resolved as shift
-  ! shift/reduce conflict for FOR resolved as shift
-  ! shift/reduce conflict for RETURN resolved as shift
-  ! shift/reduce conflict for BREAK resolved as shift
-  ! shift/reduce conflict for CONTINUE resolved as shift
-  ! shift/reduce conflict for { resolved as shift
-  ! shift/reduce conflict for & resolved as shift
-  ! shift/reduce conflict for * resolved as shift
-  ! shift/reduce conflict for ( resolved as shift
-  ! shift/reduce conflict for INTEGER resolved as shift
-  ! shift/reduce conflict for FLOAT resolved as shift
-  ! shift/reduce conflict for STRING resolved as shift
     ID              shift and go to state 113
     TYPE            shift and go to state 6
     error           shift and go to state 7
@@ -6617,28 +6206,9 @@ state 173
     &               shift and go to state 34
     *               shift and go to state 35
     (               shift and go to state 36
-    }               reduce using rule 86 (fundefs -> .)
-    ELSE            reduce using rule 86 (fundefs -> .)
     INTEGER         shift and go to state 37
     FLOAT           shift and go to state 38
     STRING          shift and go to state 39
-
-  ! TYPE            [ reduce using rule 86 (fundefs -> .) ]
-  ! ID              [ reduce using rule 86 (fundefs -> .) ]
-  ! error           [ reduce using rule 86 (fundefs -> .) ]
-  ! IF              [ reduce using rule 86 (fundefs -> .) ]
-  ! WHILE           [ reduce using rule 86 (fundefs -> .) ]
-  ! FOR             [ reduce using rule 86 (fundefs -> .) ]
-  ! RETURN          [ reduce using rule 86 (fundefs -> .) ]
-  ! BREAK           [ reduce using rule 86 (fundefs -> .) ]
-  ! CONTINUE        [ reduce using rule 86 (fundefs -> .) ]
-  ! {               [ reduce using rule 86 (fundefs -> .) ]
-  ! &               [ reduce using rule 86 (fundefs -> .) ]
-  ! *               [ reduce using rule 86 (fundefs -> .) ]
-  ! (               [ reduce using rule 86 (fundefs -> .) ]
-  ! INTEGER         [ reduce using rule 86 (fundefs -> .) ]
-  ! FLOAT           [ reduce using rule 86 (fundefs -> .) ]
-  ! STRING          [ reduce using rule 86 (fundefs -> .) ]
 
     instruction                    shift and go to state 175
     expression                     shift and go to state 112
@@ -6692,199 +6262,5 @@ WARNING: Conflicts:
 WARNING: 
 WARNING: shift/reduce conflict for TYPE in state 0 resolved as shift
 WARNING: shift/reduce conflict for error in state 0 resolved as shift
-WARNING: shift/reduce conflict for TYPE in state 0 resolved as shift
-WARNING: shift/reduce conflict for error in state 0 resolved as shift
-WARNING: shift/reduce conflict for TYPE in state 3 resolved as shift
-WARNING: shift/reduce conflict for error in state 3 resolved as shift
 WARNING: shift/reduce conflict for TYPE in state 5 resolved as shift
-WARNING: shift/reduce conflict for TYPE in state 72 resolved as shift
-WARNING: shift/reduce conflict for } in state 72 resolved as shift
-WARNING: shift/reduce conflict for ID in state 72 resolved as shift
-WARNING: shift/reduce conflict for error in state 72 resolved as shift
-WARNING: shift/reduce conflict for IF in state 72 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 72 resolved as shift
-WARNING: shift/reduce conflict for FOR in state 72 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 72 resolved as shift
-WARNING: shift/reduce conflict for BREAK in state 72 resolved as shift
-WARNING: shift/reduce conflict for CONTINUE in state 72 resolved as shift
-WARNING: shift/reduce conflict for { in state 72 resolved as shift
-WARNING: shift/reduce conflict for & in state 72 resolved as shift
-WARNING: shift/reduce conflict for * in state 72 resolved as shift
-WARNING: shift/reduce conflict for ( in state 72 resolved as shift
-WARNING: shift/reduce conflict for INTEGER in state 72 resolved as shift
-WARNING: shift/reduce conflict for FLOAT in state 72 resolved as shift
-WARNING: shift/reduce conflict for STRING in state 72 resolved as shift
-WARNING: shift/reduce conflict for TYPE in state 98 resolved as shift
-WARNING: shift/reduce conflict for } in state 98 resolved as shift
-WARNING: shift/reduce conflict for ID in state 98 resolved as shift
-WARNING: shift/reduce conflict for error in state 98 resolved as shift
-WARNING: shift/reduce conflict for IF in state 98 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 98 resolved as shift
-WARNING: shift/reduce conflict for FOR in state 98 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 98 resolved as shift
-WARNING: shift/reduce conflict for BREAK in state 98 resolved as shift
-WARNING: shift/reduce conflict for CONTINUE in state 98 resolved as shift
-WARNING: shift/reduce conflict for { in state 98 resolved as shift
-WARNING: shift/reduce conflict for & in state 98 resolved as shift
-WARNING: shift/reduce conflict for * in state 98 resolved as shift
-WARNING: shift/reduce conflict for ( in state 98 resolved as shift
-WARNING: shift/reduce conflict for INTEGER in state 98 resolved as shift
-WARNING: shift/reduce conflict for FLOAT in state 98 resolved as shift
-WARNING: shift/reduce conflict for STRING in state 98 resolved as shift
-WARNING: shift/reduce conflict for TYPE in state 127 resolved as shift
-WARNING: shift/reduce conflict for ID in state 127 resolved as shift
-WARNING: shift/reduce conflict for error in state 127 resolved as shift
-WARNING: shift/reduce conflict for IF in state 127 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 127 resolved as shift
-WARNING: shift/reduce conflict for FOR in state 127 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 127 resolved as shift
-WARNING: shift/reduce conflict for BREAK in state 127 resolved as shift
-WARNING: shift/reduce conflict for CONTINUE in state 127 resolved as shift
-WARNING: shift/reduce conflict for { in state 127 resolved as shift
-WARNING: shift/reduce conflict for & in state 127 resolved as shift
-WARNING: shift/reduce conflict for * in state 127 resolved as shift
-WARNING: shift/reduce conflict for ( in state 127 resolved as shift
-WARNING: shift/reduce conflict for INTEGER in state 127 resolved as shift
-WARNING: shift/reduce conflict for FLOAT in state 127 resolved as shift
-WARNING: shift/reduce conflict for STRING in state 127 resolved as shift
-WARNING: shift/reduce conflict for TYPE in state 133 resolved as shift
-WARNING: shift/reduce conflict for ID in state 133 resolved as shift
-WARNING: shift/reduce conflict for & in state 133 resolved as shift
-WARNING: shift/reduce conflict for * in state 133 resolved as shift
-WARNING: shift/reduce conflict for ( in state 133 resolved as shift
-WARNING: shift/reduce conflict for INTEGER in state 133 resolved as shift
-WARNING: shift/reduce conflict for FLOAT in state 133 resolved as shift
-WARNING: shift/reduce conflict for STRING in state 133 resolved as shift
 WARNING: shift/reduce conflict for ; in state 153 resolved as shift
-WARNING: shift/reduce conflict for TYPE in state 154 resolved as shift
-WARNING: shift/reduce conflict for ID in state 154 resolved as shift
-WARNING: shift/reduce conflict for error in state 154 resolved as shift
-WARNING: shift/reduce conflict for IF in state 154 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 154 resolved as shift
-WARNING: shift/reduce conflict for FOR in state 154 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 154 resolved as shift
-WARNING: shift/reduce conflict for BREAK in state 154 resolved as shift
-WARNING: shift/reduce conflict for CONTINUE in state 154 resolved as shift
-WARNING: shift/reduce conflict for { in state 154 resolved as shift
-WARNING: shift/reduce conflict for & in state 154 resolved as shift
-WARNING: shift/reduce conflict for * in state 154 resolved as shift
-WARNING: shift/reduce conflict for ( in state 154 resolved as shift
-WARNING: shift/reduce conflict for INTEGER in state 154 resolved as shift
-WARNING: shift/reduce conflict for FLOAT in state 154 resolved as shift
-WARNING: shift/reduce conflict for STRING in state 154 resolved as shift
-WARNING: shift/reduce conflict for TYPE in state 155 resolved as shift
-WARNING: shift/reduce conflict for ID in state 155 resolved as shift
-WARNING: shift/reduce conflict for error in state 155 resolved as shift
-WARNING: shift/reduce conflict for IF in state 155 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 155 resolved as shift
-WARNING: shift/reduce conflict for FOR in state 155 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 155 resolved as shift
-WARNING: shift/reduce conflict for BREAK in state 155 resolved as shift
-WARNING: shift/reduce conflict for CONTINUE in state 155 resolved as shift
-WARNING: shift/reduce conflict for { in state 155 resolved as shift
-WARNING: shift/reduce conflict for & in state 155 resolved as shift
-WARNING: shift/reduce conflict for * in state 155 resolved as shift
-WARNING: shift/reduce conflict for ( in state 155 resolved as shift
-WARNING: shift/reduce conflict for INTEGER in state 155 resolved as shift
-WARNING: shift/reduce conflict for FLOAT in state 155 resolved as shift
-WARNING: shift/reduce conflict for STRING in state 155 resolved as shift
-WARNING: shift/reduce conflict for TYPE in state 156 resolved as shift
-WARNING: shift/reduce conflict for ID in state 156 resolved as shift
-WARNING: shift/reduce conflict for error in state 156 resolved as shift
-WARNING: shift/reduce conflict for IF in state 156 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 156 resolved as shift
-WARNING: shift/reduce conflict for FOR in state 156 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 156 resolved as shift
-WARNING: shift/reduce conflict for BREAK in state 156 resolved as shift
-WARNING: shift/reduce conflict for CONTINUE in state 156 resolved as shift
-WARNING: shift/reduce conflict for { in state 156 resolved as shift
-WARNING: shift/reduce conflict for & in state 156 resolved as shift
-WARNING: shift/reduce conflict for * in state 156 resolved as shift
-WARNING: shift/reduce conflict for ( in state 156 resolved as shift
-WARNING: shift/reduce conflict for INTEGER in state 156 resolved as shift
-WARNING: shift/reduce conflict for FLOAT in state 156 resolved as shift
-WARNING: shift/reduce conflict for STRING in state 156 resolved as shift
-WARNING: shift/reduce conflict for TYPE in state 157 resolved as shift
-WARNING: shift/reduce conflict for ID in state 157 resolved as shift
-WARNING: shift/reduce conflict for error in state 157 resolved as shift
-WARNING: shift/reduce conflict for IF in state 157 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 157 resolved as shift
-WARNING: shift/reduce conflict for FOR in state 157 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 157 resolved as shift
-WARNING: shift/reduce conflict for BREAK in state 157 resolved as shift
-WARNING: shift/reduce conflict for CONTINUE in state 157 resolved as shift
-WARNING: shift/reduce conflict for { in state 157 resolved as shift
-WARNING: shift/reduce conflict for & in state 157 resolved as shift
-WARNING: shift/reduce conflict for * in state 157 resolved as shift
-WARNING: shift/reduce conflict for ( in state 157 resolved as shift
-WARNING: shift/reduce conflict for INTEGER in state 157 resolved as shift
-WARNING: shift/reduce conflict for FLOAT in state 157 resolved as shift
-WARNING: shift/reduce conflict for STRING in state 157 resolved as shift
-WARNING: shift/reduce conflict for TYPE in state 159 resolved as shift
-WARNING: shift/reduce conflict for ID in state 159 resolved as shift
-WARNING: shift/reduce conflict for error in state 159 resolved as shift
-WARNING: shift/reduce conflict for IF in state 159 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 159 resolved as shift
-WARNING: shift/reduce conflict for FOR in state 159 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 159 resolved as shift
-WARNING: shift/reduce conflict for BREAK in state 159 resolved as shift
-WARNING: shift/reduce conflict for CONTINUE in state 159 resolved as shift
-WARNING: shift/reduce conflict for { in state 159 resolved as shift
-WARNING: shift/reduce conflict for & in state 159 resolved as shift
-WARNING: shift/reduce conflict for * in state 159 resolved as shift
-WARNING: shift/reduce conflict for ( in state 159 resolved as shift
-WARNING: shift/reduce conflict for INTEGER in state 159 resolved as shift
-WARNING: shift/reduce conflict for FLOAT in state 159 resolved as shift
-WARNING: shift/reduce conflict for STRING in state 159 resolved as shift
-WARNING: shift/reduce conflict for TYPE in state 167 resolved as shift
-WARNING: shift/reduce conflict for ID in state 167 resolved as shift
-WARNING: shift/reduce conflict for error in state 167 resolved as shift
-WARNING: shift/reduce conflict for IF in state 167 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 167 resolved as shift
-WARNING: shift/reduce conflict for FOR in state 167 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 167 resolved as shift
-WARNING: shift/reduce conflict for BREAK in state 167 resolved as shift
-WARNING: shift/reduce conflict for CONTINUE in state 167 resolved as shift
-WARNING: shift/reduce conflict for { in state 167 resolved as shift
-WARNING: shift/reduce conflict for & in state 167 resolved as shift
-WARNING: shift/reduce conflict for * in state 167 resolved as shift
-WARNING: shift/reduce conflict for ( in state 167 resolved as shift
-WARNING: shift/reduce conflict for INTEGER in state 167 resolved as shift
-WARNING: shift/reduce conflict for FLOAT in state 167 resolved as shift
-WARNING: shift/reduce conflict for STRING in state 167 resolved as shift
-WARNING: shift/reduce conflict for TYPE in state 168 resolved as shift
-WARNING: shift/reduce conflict for ID in state 168 resolved as shift
-WARNING: shift/reduce conflict for error in state 168 resolved as shift
-WARNING: shift/reduce conflict for IF in state 168 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 168 resolved as shift
-WARNING: shift/reduce conflict for FOR in state 168 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 168 resolved as shift
-WARNING: shift/reduce conflict for BREAK in state 168 resolved as shift
-WARNING: shift/reduce conflict for CONTINUE in state 168 resolved as shift
-WARNING: shift/reduce conflict for { in state 168 resolved as shift
-WARNING: shift/reduce conflict for & in state 168 resolved as shift
-WARNING: shift/reduce conflict for * in state 168 resolved as shift
-WARNING: shift/reduce conflict for ( in state 168 resolved as shift
-WARNING: shift/reduce conflict for INTEGER in state 168 resolved as shift
-WARNING: shift/reduce conflict for FLOAT in state 168 resolved as shift
-WARNING: shift/reduce conflict for STRING in state 168 resolved as shift
-WARNING: shift/reduce conflict for TYPE in state 173 resolved as shift
-WARNING: shift/reduce conflict for ID in state 173 resolved as shift
-WARNING: shift/reduce conflict for error in state 173 resolved as shift
-WARNING: shift/reduce conflict for IF in state 173 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 173 resolved as shift
-WARNING: shift/reduce conflict for FOR in state 173 resolved as shift
-WARNING: shift/reduce conflict for RETURN in state 173 resolved as shift
-WARNING: shift/reduce conflict for BREAK in state 173 resolved as shift
-WARNING: shift/reduce conflict for CONTINUE in state 173 resolved as shift
-WARNING: shift/reduce conflict for { in state 173 resolved as shift
-WARNING: shift/reduce conflict for & in state 173 resolved as shift
-WARNING: shift/reduce conflict for * in state 173 resolved as shift
-WARNING: shift/reduce conflict for ( in state 173 resolved as shift
-WARNING: shift/reduce conflict for INTEGER in state 173 resolved as shift
-WARNING: shift/reduce conflict for FLOAT in state 173 resolved as shift
-WARNING: shift/reduce conflict for STRING in state 173 resolved as shift
-WARNING: reduce/reduce conflict in state 0 resolved using rule (declarations -> <empty>)
-WARNING: rejected rule (fundefs -> <empty>) in state 0
-WARNING: reduce/reduce conflict in state 3 resolved using rule (ext_declarations -> declarations)
-WARNING: rejected rule (fundefs -> <empty>) in state 3

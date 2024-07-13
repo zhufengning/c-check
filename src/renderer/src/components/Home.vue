@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 import { nextTick } from 'vue'
 import { TreeNode } from 'primevue/treenode'
 import { apiPost } from '../../../model/api'
+import { Status } from '@model/status'
 //const ipcHandle = () => window.electron.ipcRenderer.send('ping')
 
 let editor1: monaco.editor.IStandaloneCodeEditor
@@ -116,11 +117,18 @@ const selectedKey = ref<string[]>([])
 
 async function openFile(node: TreeNode) {
   console.log(node.key)
-
-  const cwd = (await window.api.getStatus()).cwd
-  const res = await apiPost('parse/', { filepath: node.key, cwd: cwd })
+  const status: Status = await window.api.getStatus()
+  const cwd = status.cwd
+  const ri = { filepath: node.key, cwd: cwd }
+  status.currentFile = node.key!
+  await window.api.setStatus(status)
+  const res = await apiPost('parse/', ri)
   const content = await res.json()
   editor1.setValue(content)
+  const vars = await (await apiPost('vars/', ri)).json()
+  console.log(vars)
+  global_vars.value = vars['global']
+  local_vars.value = vars['local']
 }
 
 const highlight = ref(false)
@@ -128,6 +136,21 @@ function switchHighlight() {
   if (!highlight.value) monaco.editor.setModelLanguage(editor1.getModel()!, 'c')
   else monaco.editor.setModelLanguage(editor1.getModel()!, 'plaintext')
   highlight.value = !highlight.value
+}
+
+const global_vars = ref([])
+const local_vars = ref([])
+
+async function globalVarClick(x) {
+  const status: Status = await window.api.getStatus()
+
+  const ri = { filepath: status.currentFile, cwd: status.cwd, var: x['name'], fun: '' }
+  const res = await apiPost('var_pos', ri)
+  console.log(await res.json())
+}
+
+function localVarClick(x) {
+  alert(x)
 }
 </script>
 
@@ -175,8 +198,26 @@ function switchHighlight() {
       <v-expansion-panels variant="accordion">
         <v-expansion-panel title="变量">
           <v-expansion-panel-text>
-            111<br />
-            222
+            <p>全局</p>
+            <v-list lines="one">
+              <v-list-item
+                v-for="v in global_vars"
+                :key="v"
+                :title="v.name"
+                @click="() => globalVarClick(v)"
+              >
+              </v-list-item>
+            </v-list>
+            <p>局部</p>
+            <v-list lines="one">
+              <v-list-item
+                v-for="v in local_vars"
+                :key="v.name"
+                :title="`${v.name} (${v.fun})`"
+                @click="() => localVarClick(v)"
+              >
+              </v-list-item>
+            </v-list>
           </v-expansion-panel-text>
         </v-expansion-panel>
         <v-expansion-panel title="函数">
