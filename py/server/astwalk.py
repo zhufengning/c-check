@@ -36,6 +36,7 @@ class FindVarVisitor(DFSVisitorWithDepth):
         self.target_fun = fun
         self.var = var
         self.results = []
+        self.function = ""
 
     def fn(self, node, depth):
         match type(node):

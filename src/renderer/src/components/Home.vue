@@ -10,7 +10,7 @@ import { Status } from '@model/status'
 
 let editor1: monaco.editor.IStandaloneCodeEditor
 const editor_container = ref<HTMLElement | null>(null)
-const decorations: monaco.editor.IEditorDecorationsCollection[] = []
+let decorations: monaco.editor.IEditorDecorationsCollection[] = []
 const router = useRouter()
 window.api.goFullscreen().then()
 onMounted(async () => {
@@ -68,39 +68,45 @@ async function chooseFolder() {
   console.log(await window.api.chooseFolder())
 }
 
+let draw_poses = []
 function test_draw() {
-  const acceptedList = ['fuck', 'shit']
+  decorations = []
 
-  acceptedList.forEach((item) => {
-    const matches = editor1
-      .getModel()!
-      .findMatches(item, false, false, true, null, false, undefined)
-    matches.forEach((match) => {
-      console.log(match.range)
-      decorations.push(
-        editor1.createDecorationsCollection([
-          {
-            range: match.range,
-            options: {
-              isWholeLine: false,
-              inlineClassName: 'someClassName',
-              stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges
-            }
+  draw_poses.forEach((element) => {
+    let line = editor1.getModel()!.getLineContent(element[0])
+
+    //search for end of identifier ([a-zA-Z_])
+    let start = element[1]-1
+    console.log(line,line[start])
+    let end = start + line.slice(start).search(/[^a-zA-Z_]/)
+    console.log(end)
+    decorations.push(
+      editor1.createDecorationsCollection([
+        {
+          range: {
+            startLineNumber: element[0],
+            startColumn: start+1,
+            endLineNumber: element[0],
+            endColumn: end+1
+          },
+          options: {
+            isWholeLine: false,
+            inlineClassName: 'someClassName',
+            stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges
           }
-        ])
-      )
-      //console.log(decorations)
-    })
+        }
+      ])
+    )
   })
 }
 
-// function deco_clear() {
-//   if (decorations) {
-//     decorations.forEach((element) => {
-//       element.clear()
-//     })
-//   }
-// }
+function deco_clear() {
+  if (decorations) {
+    decorations.forEach((element) => {
+      element.clear()
+    })
+  }
+}
 
 async function parseFile() {
   try {
@@ -145,12 +151,23 @@ async function globalVarClick(x) {
   const status: Status = await window.api.getStatus()
 
   const ri = { filepath: status.currentFile, cwd: status.cwd, var: x['name'], fun: '' }
-  const res = await apiPost('var_pos', ri)
-  console.log(await res.json())
+  const res = await (await apiPost('var_pos', ri)).json()
+  draw_poses = res
+  console.log(res)
+  deco_clear()
+  test_draw()
 }
 
-function localVarClick(x) {
-  alert(x)
+async function localVarClick(x) {
+  const status: Status = await window.api.getStatus()
+
+  const ri = { filepath: status.currentFile, cwd: status.cwd, var: x['name'], fun: x["fun"] }
+  const res = await (await apiPost('var_pos', ri)).json()
+  draw_poses = res
+  console.log(res)
+
+  deco_clear()
+  test_draw()
 }
 </script>
 

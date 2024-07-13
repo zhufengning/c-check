@@ -12,8 +12,8 @@ int main() {
   x=a;
   printf("%d", a);
   f(a + 2);
-  float fuck;
-  sprintf("%lf scr", fuck);
+  float fuc;
+  sprintf("%lf scr", fuc );
   while (1) {
   }
 }
