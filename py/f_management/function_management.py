@@ -49,8 +49,9 @@ def del_function(folder_path, file_name, key,fun_name)->bool:
         print("文件不存在")
         return False
     
+
 def find_function(folder_path, file_name, key,fun_name)->dict:
-    """返回一条危险函数信息,找到这条则返回该函数信息,否则返回None
+    """在文件中查找函数，返回一条危险函数信息,找到这条则返回该函数信息,否则返回None
 
     :param folder_path: _description_
     :param file_name: _description_
@@ -69,7 +70,17 @@ def find_function(folder_path, file_name, key,fun_name)->dict:
     except FileNotFoundError:
         print("文件不存在")
         return None
-        
+def find_function_from_list(functions:list,fun_name:str)->dict:
+    """在列表中查找函数
+
+    :param functions: _description_
+    :param fun_name: _description_
+    :return: _description_
+    """
+    for entry in functions:
+        if entry["fun_name"] == fun_name:
+            return entry
+    return None        
 def show_functions(folder_path, file_name, key)->list:
     """展示文件中的所有函数信息，文件不存在则返回None
 
@@ -109,11 +120,12 @@ if __name__ == "__main__":
     # print(add_function("usera","函数表", "key","gets","最危险","使用 fgets（buf, size, stdin）。这几乎总是一个大问题！"))
     # add_function("usera","函数表", "key","strcpy","很危险","改为使用 strncpy。")
     # add_function("usera","函数表", "key","function1","很危险","改为使用 strncpy。")
+    add_function("usera","函数表", "key","f","很危险","不能使用。")
     # del_function("usera","函数表", "key","get")
     # print(json.loads(decrypt_data("usera","函数表", "key")))
     # print(find_function("usera","函数表", "key","strcpy"))
     # add_function("usera","函数表", "key","1111","很危险","改为使用 strncpy。")
-    # print(show_functions("usera","函数表", "key"))
+    print(show_functions("usera","函数表", "key"))
     # print(filter_by_level(show_functions("usera","函数表", "key"),"很危险"))
-    print(search_by_name_regex(show_functions("usera","函数表", "key"),'\w*ets'))
+    # print(search_by_name_regex(show_functions("usera","函数表", "key"),'\w*ets'))
 
