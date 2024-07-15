@@ -76,8 +76,8 @@ function test_draw() {
     let line = editor1.getModel()!.getLineContent(element[0])
 
     //search for end of identifier ([a-zA-Z_])
-    let start = element[1]-1
-    console.log(line,line[start])
+    let start = element[1] - 1
+    console.log(line, line[start])
     let end = start + line.slice(start).search(/[^a-zA-Z_]/)
     console.log(end)
     decorations.push(
@@ -85,9 +85,9 @@ function test_draw() {
         {
           range: {
             startLineNumber: element[0],
-            startColumn: start+1,
+            startColumn: start + 1,
             endLineNumber: element[0],
-            endColumn: end+1
+            endColumn: end + 1
           },
           options: {
             isWholeLine: false,
@@ -161,7 +161,7 @@ async function globalVarClick(x) {
 async function localVarClick(x) {
   const status: Status = await window.api.getStatus()
 
-  const ri = { filepath: status.currentFile, cwd: status.cwd, var: x['name'], fun: x["fun"] }
+  const ri = { filepath: status.currentFile, cwd: status.cwd, var: x['name'], fun: x['fun'] }
   const res = await (await apiPost('var_pos', ri)).json()
   draw_poses = res
   console.log(res)
@@ -201,13 +201,10 @@ async function localVarClick(x) {
       </tree>
     </v-navigation-drawer>
     <v-main>
-      <v-row class="mx-2 my-1">
-        <v-col
-          ><v-chip @click="switchHighlight">
-            高亮：{{ highlight ? '全部' : '仅跟踪' }}
-          </v-chip></v-col
-        >
-      </v-row>
+      <div class="d-flex flex-row">
+        <v-chip class="ma-1" @click="switchHighlight"> 高亮：{{ highlight ? '全部' : '仅跟踪' }} </v-chip>
+        <v-chip class="ma-1" @click="deco_clear"> 清除标记 </v-chip>
+      </div>
 
       <div ref="editor_container" style="height: 90vh"></div>
     </v-main>

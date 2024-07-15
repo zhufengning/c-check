@@ -25,7 +25,7 @@ def pos(p):
 def pos2(p, n):
     line_start = p.lexer.lexer.lexdata.rfind("\n", 0, p.lexpos(n)) + 1
     column = p.lexpos(n) - line_start + 1
-    return p.lexer.lexer.lineno, column
+    return p.lineno(n), column
 
 
 class Cparser(object):
