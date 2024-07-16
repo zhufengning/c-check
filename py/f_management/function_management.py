@@ -166,10 +166,11 @@ if __name__ == "__main__":
     # print(filter_by_level(show_functions("usera","函数表", "key"),"很危险"))
     # print(search_by_name_regex(show_functions("usera","函数表", "key"),'\w*ets'))
     initialize_functions("usera","初始化表", "key")
-    i=0
-    for entry in show_functions("usera","初始化表", "key"):
-        i+=1
-        print(entry)
-    print(i)
+    print(show_functions("usera","初始化表", "key"))
+    # i=0
+    # for entry in show_functions("usera","初始化表", "key"):
+    #     i+=1
+    #     print(entry)
+    # print(i)
 
 
