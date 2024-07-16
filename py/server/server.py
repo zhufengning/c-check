@@ -1,3 +1,4 @@
+from collections import defaultdict
 import re
 from typing import Union
 from urllib.parse import parse_qsl
@@ -68,7 +69,11 @@ def read_file(item: ReadItem):
 
 
 def parse_c_file(filepath):
+    print(filepath)
     root, db = getCache()
+    asts = root.asts
+    if filepath in asts:
+        return
     from c_parser import cparser
     from c_parser.ply import yacc
     from c_parser import TreePrinter
@@ -82,9 +87,41 @@ def parse_c_file(filepath):
             lexer=cparser.scanner,
         )
     # print(ast.printTree(0))
-    asts = root.asts
     asts[filepath] = ast
     root.asts = asts
+
+    from astwalk import FunctionVisitor
+
+    vis = FunctionVisitor()
+    vis.visit(ast)
+
+    fr = root.functions
+    callee = root.callee
+    new_callee = vis.callee
+    print(callee, new_callee)
+    for i in new_callee:
+        for j in range(len(new_callee[i])):
+            new_callee[i][j]["file"] = filepath
+    for i in new_callee:
+        if i not in callee:
+            callee[i] = []
+        callee[i] += new_callee[i]
+    functions = vis.functions
+    for i in range(len(functions)):
+        functions[i]["file"] = filepath
+
+    fr += functions
+
+    ufr = root.used_functions
+    ufr += vis.calls
+
+    for i in range(len(fr)):
+        if fr[i]["name"] in ufr or fr[i]["name"] == "main":
+            fr[i]["used"] = True
+
+    root.functions = fr
+    root.used_functions = ufr
+
     transaction.commit()
     db.close()
     return text
@@ -182,6 +219,9 @@ def scan(item: ScanItem):
     c_files.add(filename)
     root.c_files = c_files
     root.asts = {}
+    root.functions = []
+    root.used_functions = ["main"]
+    root.callee = {}
     transaction.commit()
     db.close()
     folder = os.path.dirname(filename)
@@ -265,3 +305,40 @@ def var_pos(item: VarItem):
     r = astwalk.findVar(root.asts[f], var, fun)
     db.close()
     return r
+
+
+@app.get("/functions")
+def functions():
+    root, db = getCache()
+    r = root.functions
+    db.close()
+    return r
+
+
+@app.get("/callee")
+def callee():
+    root, db = getCache()
+    r = root.callee
+    db.close()
+    return r
+
+
+@app.post("/mem")
+def mem(item: ReadItem):
+    file = os.path.realpath(os.path.join(item.cwd, item.filepath))
+    root, db = getCache()
+    ast = root.asts[file]
+    db.close()
+    vis = astwalk.MallocVisitor()
+    vis.visit(ast)
+    print(vis.malloced, list(vis.freed))
+    s = [
+        x
+        for x in vis.malloced
+        if len(
+            list(filter(lambda y: x["fun"] == y[1] and x["name"] == y[0], vis.freed))
+        )
+        == 0
+    ]
+
+    return s
