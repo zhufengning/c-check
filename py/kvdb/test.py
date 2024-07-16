@@ -4,7 +4,7 @@ from encrypt_data import encrypt_data
 
 mp = {}
 
-mp["kkk"] = {"level":0}
+mp["gets"] = {"level":0,"描述":"使用 fgets（buf, size, stdin）。这几乎总是一个大问题！"}
 mp["aaa"] = {"level":0}
 mp["ccc"] = {"level":0}
 

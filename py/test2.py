@@ -47,6 +47,7 @@ from c_parser.DFSVisitor import DFSVisitorWithDepth
 
 class MyVisitor(DFSVisitorWithDepth):
     def fn(self, node, depth):
+        # print(node)
         match type(node):
             case AST.FunctionCall:
                 print(depth, node)
