@@ -303,16 +303,7 @@ async function findCall() {
 
       <div ref="editor_container" style="height: 90vh"></div>
     </v-main>
-    <v-navigation-drawer
-      permanent
-      location="right"
-      :width="300"
-      style="
-        ::-webkit-scrollbar {
-          display: none;
-        }
-      "
-    >
+    <v-navigation-drawer permanent location="right" :width="300">
       <v-expansion-panels variant="accordion">
         <v-expansion-panel title="变量">
           <v-expansion-panel-text>
