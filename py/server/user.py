@@ -22,7 +22,10 @@ def user_create(user, passwd):
     try:
         if (user_check(user, passwd)):
             return False
-        encrypt_data(os.path.join("users", user), f"{user}.hello", passwd, "hello")
+        userbase = os.path.join("users", user)
+        encrypt_data(userbase, f"{user}.hello", passwd, "hello")
+        from f_management.function_management import initialize_functions
+        initialize_functions(userbase, "risk_fun", passwd)
         return True
     except Exception as e:
         print(e)

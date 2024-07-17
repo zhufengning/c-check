@@ -58,26 +58,26 @@ def generate_risk_fun_pie_chart(risk_fun_infos:list,level_nums:dict):
         return ""
     # 设置中文显示
     plt.rcParams['font.sans-serif'] = 'SimHei'
-    
+
     # 创建画布
     plt.figure(figsize=(8, 6))
-    
+
     # 绘制饼图
     plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140)
     plt.title('风险函数分布饼图', fontsize=16)
-    
+
     # 添加图例
     plt.legend(labels, loc="best", fontsize=10)
-    
+
     # 保持图像比例一致
     plt.axis('equal')
-    
+
     # 保存饼图到临时文件
     with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as temp_file:
         chart_filename = temp_file.name
         # chart_filename="py\g_report\图片"
         plt.savefig(chart_filename)
-    
+
     plt.close()
     print(chart_filename)
     return chart_filename
@@ -170,7 +170,7 @@ def generate_invalid_fun_table(invalid_fun_infos:list,table_name:str)->tuple[Tab
     )
     table_title = Paragraph(table_name, table_title_style)
     return table,table_title
-    
+
 def generate_risk_fun_table(risk_fun_infos:list,table_name:str)->tuple[Table,Paragraph]:
     """返回生成的风险函数表格和表格名
 
@@ -260,11 +260,11 @@ def generate_report(file_name:str,program:str,variable_infos:list,risk_fun_infos
     :param file_name: _description_
     :return: _description_
     """
-    folder_path= "py/reports"
+    folder_path= os.path.join(os.path.dirname(__file__),"..", "reports")
     full_path = os.path.join(folder_path, file_name)
     # 定义要在文档中插入的内容
     # 返回一个字典，包含了多个预定义的样式，例如 'Title'、'Normal'、'Italic' 等。
-    pdfmetrics.registerFont(TTFont('SimSun', 'py\g_report\SimSun.ttf'))  #注册字体
+    pdfmetrics.registerFont(TTFont('SimSun', os.path.join(os.path.dirname(__file__), "SimSun.ttf")))  #注册字体
     styles = getSampleStyleSheet()
     styles.add(ParagraphStyle(fontName='SimSun', name='Song', leading=20, fontSize=12))  # 自己增加新注册的字体
     styles['Title'].fontName = 'SimSun' #将标题字体更改为'SimSun'
@@ -321,7 +321,7 @@ def generate_report(file_name:str,program:str,variable_infos:list,risk_fun_infos
 
 
 if __name__ == '__main__':
-    
+
     cparser = cparser.Cparser()
     parser = yacc.yacc(module=cparser)
     source2 = """#include <stdio.h>
@@ -333,6 +333,7 @@ if __name__ == '__main__':
     }
     int main() {
     int x = 0;
+    gets(x);
     int *y = &x;
     int arr[50];
     arr[0] = 1;
@@ -356,8 +357,8 @@ if __name__ == '__main__':
     )
 
     risk_functions=[{'fun_name': 'gets', 'fun_level': '最危险', 'fun_solution': '使用 fgets（buf, size, stdin）。这几乎总是一个大问题！'},
-                     {'fun_name': 'strcpy', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy。'}, 
-                     {'fun_name': 'function1', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy。'}, 
+                     {'fun_name': 'strcpy', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy。'},
+                     {'fun_name': 'function1', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy。'},
                      {'fun_name': 'f', 'fun_level': '很危险', 'fun_solution': '不能使用。1111111111111111111111111111111111111111111111111111111111111111111111111'}]
 
     invalid_functions=[{'File Path':"??????????????????????????????????test.c","Position":(1,1),"Function Name":"无效函数"},
@@ -395,8 +396,8 @@ if __name__ == '__main__':
     #                 {'fun_name': 'vsnprintf', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'}]
     v=Risk_fun_Visitor(risk_functions,"//////////////////////test.c")
     v.visit(ast)
-    
-    
+
+
     # print(v.risk_fun_infos)
     # for node in v.risk_fun_nodes:
     #     print(node)

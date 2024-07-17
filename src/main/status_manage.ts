@@ -1,6 +1,8 @@
-import { dialog, ipcMain } from 'electron'
+import { dialog, ipcMain, shell } from 'electron'
 import { Status } from '../model/status'
 import { dirname } from 'path'
+import { exec, spawn } from 'child_process'
+import { realpath, realpathSync } from 'fs'
 
 let status = new Status()
 
@@ -9,6 +11,11 @@ export function initHandlers(mainWindow) {
   ipcMain.handle('get-status', () => getStatus())
   ipcMain.handle('set-status', setStatus)
   ipcMain.handle('fullscreen', () => goFullscreen(mainWindow))
+  ipcMain.handle('open-graph', async () => {
+    const p = realpathSync('./py/server/graph.png')
+    console.log(p)
+    return await shell.openPath(p)
+  })
 }
 
 export function getStatus() {

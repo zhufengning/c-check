@@ -133,6 +133,8 @@ function relative(from: string, to) {
 const callee = ref({})
 async function parseFile() {
   try {
+    selectedKey.value = {}
+    editor1.setValue('')
     const res = await apiPost('scan/', { filename: await window.api.chooseFolder() })
     nodes.value = transformToTreeNodes(await res.json())
     console.log(nodes.value)
@@ -254,6 +256,12 @@ async function findCall() {
   isActive.value = true
   console.log(res)
 }
+
+async function vgraph() {
+  const status: Status = await window.api.getStatus()
+  await apiPost('graph', { filepath: status.currentFile, cwd: status.cwd })
+  console.log(await window.api.openGraph())
+}
 </script>
 
 <template>
@@ -273,6 +281,11 @@ async function findCall() {
         <v-row>
           <v-col class="d-flex flex-wrap ga-3">
             <v-btn prepend-icon="mdi-google" @click="findCall">查找调用</v-btn>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class="d-flex flex-wrap ga-3">
+            <v-btn prepend-icon="mdi-earth" @click="vgraph">变量关系图</v-btn>
           </v-col>
         </v-row>
         <v-row v-if="nodes.length == 0">
@@ -369,7 +382,7 @@ async function findCall() {
 
             <v-list lines="three">
               <v-list-item
-                v-for="v in funcs"
+                v-for="v in funcs.filter((x)=>x.name!='main')"
                 :key="v"
                 :title="'任何文件中均未使用函数'"
                 :subtitle="`${v.name} 定义于${v.file}`"

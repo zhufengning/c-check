@@ -342,3 +342,15 @@ def mem(item: ReadItem):
     ]
 
     return s
+
+@app.post("/graph")
+def graph(item: ReadItem):
+    file = os.path.realpath(os.path.join(item.cwd, item.filepath))
+    root, db = getCache()
+    ast = root.asts[file]
+
+    from vgraphtest import gen_graph
+
+    gen_graph(ast)
+    db.close()
+    return "OK"

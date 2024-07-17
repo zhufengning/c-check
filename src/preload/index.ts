@@ -6,7 +6,8 @@ const api = {
   chooseFolder: () => electronAPI.ipcRenderer.invoke('choose-folder'),
   getStatus: () => electronAPI.ipcRenderer.invoke('get-status'),
   setStatus: (status: string) => electronAPI.ipcRenderer.invoke('set-status', status),
-  goFullscreen: () => electronAPI.ipcRenderer.invoke('fullscreen')
+  goFullscreen: () => electronAPI.ipcRenderer.invoke('fullscreen'),
+  openGraph: () => electronAPI.ipcRenderer.invoke('open-graph')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
