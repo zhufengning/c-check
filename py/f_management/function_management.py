@@ -2,7 +2,17 @@ import os,json ,sys,re
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from kvdb import decrypt_data,encrypt_data
 
+def set_function_list(folder_path, file_name, key,functions:list)->bool:
+    """设置函数列表，成功返回true,失败返回false
 
+    :param folder_path: _description_
+    :param file_name: _description_
+    :param key: _description_
+    :param functions: _description_
+    """
+    print(functions)
+    encrypt_data(folder_path,file_name,key,json.dumps(functions))
+    return True
 
 def add_function(folder_path, file_name, key,fun_name,fun_level,fun_solution)->bool:
     """向风险函数库中添加一条函数信息,成功返回true,失败返回false
@@ -16,7 +26,7 @@ def add_function(folder_path, file_name, key,fun_name,fun_level,fun_solution)->b
     """
     try:
         functions:list=json.loads(decrypt_data(folder_path,file_name,key))
-        
+
     except FileNotFoundError:
         functions=[]
     finally:
@@ -63,7 +73,7 @@ def initialize_functions(folder_path, file_name, key):
     {'fun_name': 'vsnprintf', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'}
 ]
     encrypt_data(folder_path,file_name,key,json.dumps(functions))
-    
+
 def del_function(folder_path, file_name, key,fun_name)->bool:
     """删除一条危险函数，成功返回true,失败返回false
 
@@ -85,7 +95,7 @@ def del_function(folder_path, file_name, key,fun_name)->bool:
     except FileNotFoundError:
         print("文件不存在")
         return False
-    
+
 
 def find_function(folder_path, file_name, key,fun_name)->dict:
     """在文件中查找函数，返回一条危险函数信息,找到这条则返回该函数信息,否则返回None
@@ -100,7 +110,7 @@ def find_function(folder_path, file_name, key,fun_name)->dict:
         for entry in functions[:]:  # 使用切片复制列表，以便在迭代过程中安全删除
             if entry['fun_name'] == fun_name:
                 return entry
-        
+
         print("函数不存在")
         return None
 
@@ -117,7 +127,7 @@ def find_function_from_list(functions:list,fun_name:str)->dict:
     for entry in functions:
         if entry["fun_name"] == fun_name:
             return entry
-    return None        
+    return None
 def show_functions(folder_path, file_name, key)->list:
     """展示文件中的所有函数信息，文件不存在则返回None
 
@@ -133,7 +143,7 @@ def show_functions(folder_path, file_name, key)->list:
     except FileNotFoundError:
         print("文件不存在")
         return None
-    
+
 def filter_by_level(functions:list,level:str)->list:
     """根据风险等级过滤函数信息，返回过滤后的函数信息列表
 

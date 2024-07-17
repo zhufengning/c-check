@@ -16,6 +16,11 @@ export function initHandlers(mainWindow) {
     console.log(p)
     return await shell.openPath(p)
   })
+  ipcMain.handle('open-report', async () => {
+    const p = realpathSync('./py/reports/report.pdf')
+    console.log(p)
+    return await shell.openPath(p)
+  })
 }
 
 export function getStatus() {

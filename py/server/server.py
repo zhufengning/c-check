@@ -361,6 +361,7 @@ def risk(user: User):
 
     from f_management.function_management import show_functions
     from g_report.generate_report import generate_report, Risk_fun_Visitor
+    from g_report.complexity_analysis import ComplexityAnalyzer
 
     userbase = os.path.join("users", user.user)
     rules = show_functions(userbase, "risk_fun", user.passwd)
@@ -368,6 +369,7 @@ def risk(user: User):
 
     al = []
     av = []
+    ac = []
 
     for f in root.asts:
         print(f)
@@ -378,16 +380,55 @@ def risk(user: User):
         var_vis = astwalk.getVars2(ast)
         all_vars = var_vis.globalv + var_vis.localv
         unused_vars = [x for x in all_vars if x["used"] == False]
+        for i in range(len(unused_vars)):
+            unused_vars[i]["File Path"] = f
         av += unused_vars
 
-    print(al)
-    print(av)
-    print(root.functions, root.callee)
+        ca = ComplexityAnalyzer(ast, f)
+        ac.append(ca.analyze())
+
     af = [x for x in root.functions if x["used"]==False]
     for i in range(len(af)):
         af[i].pop("used")
+        av[i].pop("used")
 
-    generate_report(os.path.join(os.path.dirname(__file__),"..", "reports","report.pdf"),"Program", av,al,af)
+    print(av)
+    generate_report(os.path.join(os.path.dirname(__file__),"..", "reports","report.pdf"),"Program", av,al,af,ac)
 
     db.close()
-    return al
+    return "ok"
+
+@app.post("/rules")
+def rules(user: User):
+    root, db = getCache()
+
+    from f_management.function_management import show_functions
+
+    userbase = os.path.join("users", user.user)
+    rules = show_functions(userbase, "risk_fun", user.passwd)
+    db.close()
+    return rules
+
+
+class UpdateRulesItem(BaseModel):
+    user: str
+    passwd: str
+    rules: list[dict]
+@app.post("/update_rules")
+def update_rules(item: UpdateRulesItem):
+
+    from f_management.function_management import set_function_list
+
+    userbase = os.path.join("users", item.user)
+    set_function_list(userbase, "risk_fun", item.passwd, item.rules)
+    return "ok"
+
+
+@app.post("/init_rules")
+def init_rules(user: User):
+
+    from f_management.function_management import initialize_functions
+
+    userbase = os.path.join("users", user.user)
+    initialize_functions(userbase, "risk_fun", user.passwd)
+    return "ok"

@@ -16,7 +16,11 @@ class VarsVisitor(DFSVisitorWithDepth):
             case AST.Declaration:
                 vs = []
                 for i in node.inits.inits:
-                    r = f"{node.type} {i.id}"
+                    vid = i.id.id if isinstance(i.id, AST.Pointer) else i.id
+                    if isinstance(i.id, AST.Pointer):
+                        r = f"{node.type} *{vid}"
+                    else:
+                        r = f"{node.type} {vid}"
                     print(i.expr)
                     if isinstance(i.expr, AST.Array):
                         print("Is Array!")
@@ -24,7 +28,7 @@ class VarsVisitor(DFSVisitorWithDepth):
                         print(r)
                     vs.append(
                         {
-                            "name": i.id,
+                            "name": vid,
                             "pos": i.pos,
                             "used": False,
                             "repr": r,
@@ -41,14 +45,15 @@ class VarsVisitor(DFSVisitorWithDepth):
             case AST.Variable:
                 localv = self.localv
                 globalv = self.globalv
+                vid = node.id.id if isinstance(node.id, AST.Pointer) else node.id
                 for i in range(len(localv)):
                     if (
-                        localv[i]["name"] == node.id
+                        localv[i]["name"] == vid
                         and localv[i]["fun"] == self.function
                     ):
                         localv[i]["used"] = True
                 for i in range(len(globalv)):
-                    if globalv[i]["name"] == node.id and "fun" not in globalv[i]:
+                    if globalv[i]["name"] == vid and "fun" not in globalv[i]:
                         globalv[i]["used"] = True
             case AST.FunctionDef:
                 self.function = node.name
@@ -66,7 +71,11 @@ class VarsVisitor2(DFSVisitorWithDepth):
             case AST.Declaration:
                 vs = []
                 for i in node.inits.inits:
-                    r = f"{node.type} {i.id}"
+                    vid = i.id.id if isinstance(i.id, AST.Pointer) else i.id
+                    if isinstance(i.id, AST.Pointer):
+                        r = f"{node.type} *{vid}"
+                    else:
+                        r = f"{node.type} {vid}"
                     print(i.expr)
                     if isinstance(i.expr, AST.Array):
                         print("Is Array!")
@@ -90,14 +99,15 @@ class VarsVisitor2(DFSVisitorWithDepth):
             case AST.Variable:
                 localv = self.localv
                 globalv = self.globalv
+                vid = node.id.id if isinstance(node.id, AST.Pointer) else node.id
                 for i in range(len(localv)):
                     if (
-                        localv[i]["Variable Name"] == node.id
+                        localv[i]["Variable Name"] == vid
                         and localv[i]["Belong Function"] == self.function
                     ):
                         localv[i]["used"] = True
                 for i in range(len(globalv)):
-                    if globalv[i]["Variable Name"] == node.id and "Belong Function" not in globalv[i]:
+                    if globalv[i]["Variable Name"] == vid and "Belong Function" not in globalv[i]:
                         globalv[i]["used"] = True
             case AST.FunctionDef:
                 self.function = node.name
