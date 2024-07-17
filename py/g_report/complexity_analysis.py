@@ -26,10 +26,10 @@ class ComplexityAnalyzer:
         max_nested_level = max(self.nested_levels) if self.nested_levels else 0
 
         return {
-            "filename":self.filename,
-            "cyclomatic_complexity": self.complexity,
-            "average_function_length": average_function_length,
-            "max_nested_level": max_nested_level,
+            "文件名":self.filename,
+            "圈复杂度": self.complexity,
+            "平均函数长度": average_function_length,
+            "最大嵌套": max_nested_level,
         }
 
     def visit(self, node):
@@ -162,7 +162,7 @@ if __name__ == '__main__':
         lexer=cparser.scanner,
     )
 
-    analyzer = ComplexityAnalyzer(ast)
+    analyzer = ComplexityAnalyzer(ast,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!this.c")
     metrics = analyzer.analyze()
     print(metrics)
 
