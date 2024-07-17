@@ -262,6 +262,12 @@ async function vgraph() {
   await apiPost('graph', { filepath: status.currentFile, cwd: status.cwd })
   console.log(await window.api.openGraph())
 }
+
+async function report() {
+  const status: Status = await window.api.getStatus()
+  await apiPost('risk', { user: status.user, passwd: status.passwd })
+  console.log(await window.api.openReport())
+}
 </script>
 
 <template>
@@ -274,18 +280,24 @@ async function vgraph() {
           </v-col>
         </v-row>
         <v-row>
-          <v-col class="d-flex flex-wrap ga-3">
-            <v-btn prepend-icon="mdi-apple" @click="findDef">到函数定义</v-btn>
+          <v-col class="d-flex flex-wrap">
+            <v-btn @click="findDef">到函数定义</v-btn>
           </v-col>
-        </v-row>
-        <v-row>
-          <v-col class="d-flex flex-wrap ga-3">
-            <v-btn prepend-icon="mdi-google" @click="findCall">查找调用</v-btn>
+          <v-col class="d-flex flex-wrap">
+            <v-btn @click="findCall">查找调用</v-btn>
           </v-col>
         </v-row>
         <v-row>
           <v-col class="d-flex flex-wrap ga-3">
             <v-btn prepend-icon="mdi-earth" @click="vgraph">变量关系图</v-btn>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class="d-flex flex-wrap ga-3">
+            <v-btn @click="report">生成报告</v-btn>
+          </v-col>
+          <v-col class="d-flex flex-wrap ga-3">
+            <v-btn prepend-icon="mdi-book" @click="router.push('/manage')">管理风险函数</v-btn>
           </v-col>
         </v-row>
         <v-row v-if="nodes.length == 0">
@@ -365,7 +377,7 @@ async function vgraph() {
                 @click="() => localVarClick(item)"
               >
                 <v-list-item-subtitle
-                  >{{ item['fun'] }}函数中变量{{ item['name'] }}未使用</v-list-item-subtitle
+                  >{{ item['fun'] }}函数中变量{{ item['repr'] }}未使用</v-list-item-subtitle
                 >
               </v-list-item>
             </v-list>
@@ -376,7 +388,7 @@ async function vgraph() {
                 :title="'当前文件' + item['pos'][0] + '行' + item['pos'][1] + '列'"
                 @click="() => globalVarClick(item)"
               >
-                <v-list-item-subtitle>全局变量{{ item['name'] }}未使用</v-list-item-subtitle>
+                <v-list-item-subtitle>全局变量{{ item['repr'] }}未使用</v-list-item-subtitle>
               </v-list-item>
             </v-list>
 

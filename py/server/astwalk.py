@@ -16,7 +16,11 @@ class VarsVisitor(DFSVisitorWithDepth):
             case AST.Declaration:
                 vs = []
                 for i in node.inits.inits:
-                    r = f"{node.type} {i.id}"
+                    vid = i.id.id if isinstance(i.id, AST.Pointer) else i.id
+                    if isinstance(i.id, AST.Pointer):
+                        r = f"{node.type} *{vid}"
+                    else:
+                        r = f"{node.type} {vid}"
                     print(i.expr)
                     if isinstance(i.expr, AST.Array):
                         print("Is Array!")
@@ -24,7 +28,7 @@ class VarsVisitor(DFSVisitorWithDepth):
                         print(r)
                     vs.append(
                         {
-                            "name": i.id,
+                            "name": vid,
                             "pos": i.pos,
                             "used": False,
                             "repr": r,
@@ -41,18 +45,72 @@ class VarsVisitor(DFSVisitorWithDepth):
             case AST.Variable:
                 localv = self.localv
                 globalv = self.globalv
+                vid = node.id.id if isinstance(node.id, AST.Pointer) else node.id
                 for i in range(len(localv)):
                     if (
-                        localv[i]["name"] == node.id
+                        localv[i]["name"] == vid
                         and localv[i]["fun"] == self.function
                     ):
                         localv[i]["used"] = True
                 for i in range(len(globalv)):
-                    if globalv[i]["name"] == node.id and "fun" not in globalv[i]:
+                    if globalv[i]["name"] == vid and "fun" not in globalv[i]:
                         globalv[i]["used"] = True
             case AST.FunctionDef:
                 self.function = node.name
 
+
+class VarsVisitor2(DFSVisitorWithDepth):
+    def __init__(self):
+        super().__init__()
+        self.function = ""
+        self.globalv = []
+        self.localv = []
+
+    def fn(self, node, depth):
+        match type(node):
+            case AST.Declaration:
+                vs = []
+                for i in node.inits.inits:
+                    vid = i.id.id if isinstance(i.id, AST.Pointer) else i.id
+                    if isinstance(i.id, AST.Pointer):
+                        r = f"{node.type} *{vid}"
+                    else:
+                        r = f"{node.type} {vid}"
+                    print(i.expr)
+                    if isinstance(i.expr, AST.Array):
+                        print("Is Array!")
+                        r += f"[{i.expr.index}]"
+                        print(r)
+
+                    vs.append({
+                        "Variable Name": r,
+                        "Position": i.pos,
+                        "Belong Function": "",
+                        "used": False,
+                    })
+                if depth == 2:
+                    print("global:", node)
+                    self.globalv += vs
+                else:
+                    print("local:", self.function, node)
+                    for i in vs:
+                        i["Belong Function"] = self.function
+                    self.localv += vs
+            case AST.Variable:
+                localv = self.localv
+                globalv = self.globalv
+                vid = node.id.id if isinstance(node.id, AST.Pointer) else node.id
+                for i in range(len(localv)):
+                    if (
+                        localv[i]["Variable Name"] == vid
+                        and localv[i]["Belong Function"] == self.function
+                    ):
+                        localv[i]["used"] = True
+                for i in range(len(globalv)):
+                    if globalv[i]["Variable Name"] == vid and "Belong Function" not in globalv[i]:
+                        globalv[i]["used"] = True
+            case AST.FunctionDef:
+                self.function = node.name
 
 class FindVarVisitor(DFSVisitorWithDepth):
     def __init__(self, fun, var):
@@ -92,6 +150,10 @@ def getVars(ast):
     mv = VarsVisitor()
     mv.visit(ast)
     return {"local": mv.localv, "global": mv.globalv}
+def getVars2(ast):
+    mv = VarsVisitor2()
+    mv.visit(ast)
+    return mv
 
 
 def findVar(ast, var, fun):

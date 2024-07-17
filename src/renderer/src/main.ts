@@ -23,7 +23,8 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes: [
     { path: '/', component: Login },
-    { path: '/home', component: Home }
+    { path: '/home', component: Home },
+    { path: '/manage', component: () => import('./components/Manage.vue') },
   ]
 })
 app.use(router)

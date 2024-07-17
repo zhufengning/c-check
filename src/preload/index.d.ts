@@ -9,6 +9,7 @@ declare global {
       getStatus: () => Promise<Status>
       setStatus: (string) => Promise<void>
       openGraph: () => Promise<string>
+      openReport: () => Promise<string>
     }
   }
 }
