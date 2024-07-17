@@ -4,7 +4,7 @@ import * as monaco from 'monaco-editor'
 import { useRouter } from 'vue-router'
 import { nextTick } from 'vue'
 import { TreeNode } from 'primevue/treenode'
-import { apiPost } from '../../../model/api'
+import { apiGet, apiPost } from '../../../model/api'
 import { Status } from '@model/status'
 //const ipcHandle = () => window.electron.ipcRenderer.send('ping')
 
@@ -68,7 +68,7 @@ async function chooseFolder() {
   console.log(await window.api.chooseFolder())
 }
 
-let draw_poses = []
+let draw_poses: any[] = []
 function test_draw() {
   decorations = []
 
@@ -78,7 +78,7 @@ function test_draw() {
     //search for end of identifier ([a-zA-Z_])
     let start = element[1] - 1
     console.log(line, line[start])
-    let end = start + line.slice(start).search(/[^a-zA-Z_]/)
+    let end = start + line.slice(start).search(/[^a-zA-Z1-9_]/)
     console.log(end)
     decorations.push(
       editor1.createDecorationsCollection([
@@ -101,6 +101,7 @@ function test_draw() {
 }
 
 function deco_clear() {
+  draw_poses = []
   if (decorations) {
     decorations.forEach((element) => {
       element.clear()
@@ -108,21 +109,52 @@ function deco_clear() {
   }
 }
 
+function relative(from: string, to) {
+  const sp = from.indexOf('/') == -1 ? '\\' : '/'
+  const fromParts = from.split(sp).filter(Boolean)
+  const toParts = to.split(sp).filter(Boolean)
+
+  let commonIndex = 0
+  while (
+    commonIndex < fromParts.length &&
+    commonIndex < toParts.length &&
+    fromParts[commonIndex] === toParts[commonIndex]
+  ) {
+    commonIndex++
+  }
+
+  const upLevels = fromParts.length - commonIndex
+  const upPath = new Array(upLevels).fill('..')
+  const downPath = toParts.slice(commonIndex)
+
+  return upPath.concat(downPath).join(sp)
+}
+
+const callee = ref({})
 async function parseFile() {
   try {
     const res = await apiPost('scan/', { filename: await window.api.chooseFolder() })
     nodes.value = transformToTreeNodes(await res.json())
     console.log(nodes.value)
+    const funres = await (await apiGet('functions/')).json()
+    funres.forEach(async (x) => (x.file = relative((await window.api.getStatus()).cwd, x.file)))
+    funcs.value = funres
+    console.log(funres)
+    const callee_res = await (await apiGet('callee/')).json()
+
+    callee.value = callee_res
   } catch (e) {
     nodes.value = []
   }
 }
 
 const nodes = ref<TreeNode[]>([])
-const selectedKey = ref<string[]>([])
+const selectedKey = ref<any>({})
+const funcs = ref([])
 
 async function openFile(node: TreeNode) {
-  console.log(node.key)
+  deco_clear()
+  console.log('Selection:', node.key)
   const status: Status = await window.api.getStatus()
   const cwd = status.cwd
   const ri = { filepath: node.key, cwd: cwd }
@@ -133,8 +165,20 @@ async function openFile(node: TreeNode) {
   editor1.setValue(content)
   const vars = await (await apiPost('vars/', ri)).json()
   console.log(vars)
+  const leak = await (await apiPost('mem/', ri)).json()
   global_vars.value = vars['global']
   local_vars.value = vars['local']
+  leak_vars.value = leak
+}
+
+function switchSelection(v) {
+  const nv = {}
+  for (const i of v) {
+    nv[i] = true
+  }
+
+  selectedKey.value = nv
+  openFile({ key: v[0] })
 }
 
 const highlight = ref(false)
@@ -146,28 +190,69 @@ function switchHighlight() {
 
 const global_vars = ref([])
 const local_vars = ref([])
+const leak_vars = ref([])
 
 async function globalVarClick(x) {
   const status: Status = await window.api.getStatus()
 
   const ri = { filepath: status.currentFile, cwd: status.cwd, var: x['name'], fun: '' }
   const res = await (await apiPost('var_pos', ri)).json()
-  draw_poses = res
   console.log(res)
   deco_clear()
+  draw_poses = res
   test_draw()
 }
 
 async function localVarClick(x) {
+  console.log(x)
   const status: Status = await window.api.getStatus()
+  if (x['name']['id']) {
+    x['name'] = x['name']['id']
+  }
 
   const ri = { filepath: status.currentFile, cwd: status.cwd, var: x['name'], fun: x['fun'] }
   const res = await (await apiPost('var_pos', ri)).json()
-  draw_poses = res
   console.log(res)
 
   deco_clear()
+  draw_poses = res
   test_draw()
+}
+
+async function funcClick(x) {
+  switchSelection([x.file])
+  deco_clear()
+  draw_poses = [x.pos]
+  test_draw()
+}
+
+async function findDef() {
+  const s = editor1.getModel()?.getValueInRange(editor1.getSelection()!)
+
+  const res = funcs.value.find((x) => x.name == s)
+  console.log(res)
+  funcClick(res)
+}
+
+function jumpTo(p) {
+  console.log(p)
+  switchSelection([p.file])
+  deco_clear()
+  draw_poses = [p.pos]
+  test_draw()
+}
+
+const isActive = ref(false)
+const target_callee = ref([])
+async function findCall() {
+  const s = editor1.getModel()?.getValueInRange(editor1.getSelection()!)
+
+  const res = callee.value[s]
+
+  res.forEach(async (x) => (x.file = relative((await window.api.getStatus()).cwd, x.file)))
+  target_callee.value = res
+  isActive.value = true
+  console.log(res)
 }
 </script>
 
@@ -178,8 +263,16 @@ async function localVarClick(x) {
         <v-row>
           <v-col class="d-flex flex-wrap ga-3">
             <v-btn prepend-icon="mdi-file" @click="parseFile">打开</v-btn>
-            <v-btn prepend-icon="mdi-apple" @click="chooseFolder">111</v-btn>
-            <v-btn prepend-icon="mdi-google" @click="chooseFolder">111</v-btn>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class="d-flex flex-wrap ga-3">
+            <v-btn prepend-icon="mdi-apple" @click="findDef">到函数定义</v-btn>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class="d-flex flex-wrap ga-3">
+            <v-btn prepend-icon="mdi-google" @click="findCall">查找调用</v-btn>
           </v-col>
         </v-row>
         <v-row v-if="nodes.length == 0">
@@ -202,13 +295,15 @@ async function localVarClick(x) {
     </v-navigation-drawer>
     <v-main>
       <div class="d-flex flex-row">
-        <v-chip class="ma-1" @click="switchHighlight"> 高亮：{{ highlight ? '全部' : '仅跟踪' }} </v-chip>
+        <v-chip class="ma-1" @click="switchHighlight">
+          高亮：{{ highlight ? '全部' : '仅跟踪' }}
+        </v-chip>
         <v-chip class="ma-1" @click="deco_clear"> 清除标记 </v-chip>
       </div>
 
       <div ref="editor_container" style="height: 90vh"></div>
     </v-main>
-    <v-navigation-drawer permanent location="right" :width="200">
+    <v-navigation-drawer permanent location="right" :width="300">
       <v-expansion-panels variant="accordion">
         <v-expansion-panel title="变量">
           <v-expansion-panel-text>
@@ -217,7 +312,7 @@ async function localVarClick(x) {
               <v-list-item
                 v-for="v in global_vars"
                 :key="v"
-                :title="v.name"
+                :title="v.repr"
                 @click="() => globalVarClick(v)"
               >
               </v-list-item>
@@ -227,7 +322,7 @@ async function localVarClick(x) {
               <v-list-item
                 v-for="v in local_vars"
                 :key="v.name"
-                :title="`${v.name} (${v.fun})`"
+                :title="`${v.repr} (${v.fun})`"
                 @click="() => localVarClick(v)"
               >
               </v-list-item>
@@ -236,13 +331,97 @@ async function localVarClick(x) {
         </v-expansion-panel>
         <v-expansion-panel title="函数">
           <v-expansion-panel-text>
-            111<br />
-            222
+            <v-list lines="one">
+              <v-list-item
+                v-for="v in funcs"
+                :key="v"
+                :title="`${v.name}(${v.file})`"
+                @click="() => funcClick(v)"
+              >
+              </v-list-item>
+            </v-list>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+        <v-expansion-panel title="检测警告">
+          <v-expansion-panel-text>
+            <v-list lines="three">
+              <v-list-item
+                v-for="item in local_vars.filter((x) => x['used'] == false)"
+                :key="item['name']"
+                :title="'当前文件' + item['pos'][0] + '行' + item['pos'][1] + '列'"
+                @click="() => localVarClick(item)"
+              >
+                <v-list-item-subtitle
+                  >{{ item['fun'] }}函数中变量{{ item['name'] }}未使用</v-list-item-subtitle
+                >
+              </v-list-item>
+            </v-list>
+            <v-list lines="three">
+              <v-list-item
+                v-for="item in global_vars.filter((x) => x['used'] == false)"
+                :key="item['name']"
+                :title="'当前文件' + item['pos'][0] + '行' + item['pos'][1] + '列'"
+                @click="() => globalVarClick(item)"
+              >
+                <v-list-item-subtitle>全局变量{{ item['name'] }}未使用</v-list-item-subtitle>
+              </v-list-item>
+            </v-list>
+
+            <v-list lines="three">
+              <v-list-item
+                v-for="v in funcs"
+                :key="v"
+                :title="'任何文件中均未使用函数'"
+                :subtitle="`${v.name} 定义于${v.file}`"
+                @click="() => funcClick(v)"
+              >
+              </v-list-item>
+            </v-list>
+
+            <v-list lines="three">
+              <v-list-item
+                v-for="item in leak_vars"
+                :key="item['name']"
+                :title="'定义于' + item['pos'][0] + '行' + item['pos'][1] + '列的指针'"
+                @click="() => localVarClick(item)"
+              >
+                <v-list-item-subtitle
+                  >{{ item['fun'] }}函数中指针{{ item['name'] }}分配后未释放</v-list-item-subtitle
+                >
+              </v-list-item>
+            </v-list>
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
     </v-navigation-drawer>
   </v-layout>
+
+  <v-dialog v-model="isActive" max-width="400">
+    <v-card title="提示">
+      <v-card-text>
+        <v-list>
+          <v-list-item
+            v-for="item in target_callee"
+            :key="item"
+            @click="
+              () => {
+                jumpTo(item)
+                isActive = false
+              }
+            "
+          >
+            <v-list-item-title>{{ item.pos }} {{ item.file }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+
+        <v-btn text="关闭" @click="isActive = false"></v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <style>

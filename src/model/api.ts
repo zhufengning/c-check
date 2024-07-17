@@ -7,3 +7,9 @@ export function apiPost(route: string, data: object) {
     headers: { 'Content-Type': 'application/json' }
   })
 }
+export function apiGet(route: string) {
+  return fetch(`${api_base}/${route}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  })
+}
