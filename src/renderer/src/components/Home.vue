@@ -268,6 +268,13 @@ async function report() {
   await apiPost('risk', { user: status.user, passwd: status.passwd })
   console.log(await window.api.openReport())
 }
+
+async function terminal() {
+  await window.api.shell()
+}
+async function clang() {
+  await window.api.clang()
+}
 </script>
 
 <template>
@@ -298,6 +305,14 @@ async function report() {
           </v-col>
           <v-col class="d-flex flex-wrap ga-3">
             <v-btn prepend-icon="mdi-book" @click="router.push('/manage')">管理风险函数</v-btn>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class="d-flex flex-wrap ga-3">
+            <v-btn prepend-icon="mdi-console" @click="terminal">启动终端</v-btn>
+          </v-col>
+          <v-col class="d-flex flex-wrap ga-3">
+            <v-btn prepend-icon="mdi-language-c" @click="clang">运行clang-tidy</v-btn>
           </v-col>
         </v-row>
         <v-row v-if="nodes.length == 0">

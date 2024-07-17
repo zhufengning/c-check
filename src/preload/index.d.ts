@@ -10,6 +10,8 @@ declare global {
       setStatus: (string) => Promise<void>
       openGraph: () => Promise<string>
       openReport: () => Promise<string>
+      shell: ()=>Promise<void>
+      clang: ()=>Promise<void>
     }
   }
 }

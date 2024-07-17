@@ -8,7 +8,9 @@ const api = {
   setStatus: (status: string) => electronAPI.ipcRenderer.invoke('set-status', status),
   goFullscreen: () => electronAPI.ipcRenderer.invoke('fullscreen'),
   openGraph: () => electronAPI.ipcRenderer.invoke('open-graph'),
-  openReport: () => electronAPI.ipcRenderer.invoke('open-report')
+  openReport: () => electronAPI.ipcRenderer.invoke('open-report'),
+  shell: () => electronAPI.ipcRenderer.invoke('shell'),
+  clang: () => electronAPI.ipcRenderer.invoke('clang')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

@@ -21,6 +21,15 @@ export function initHandlers(mainWindow) {
     console.log(p)
     return await shell.openPath(p)
   })
+
+  ipcMain.handle("shell", ()=>{
+    exec(`start pwsh.exe -wd ${getStatus().cwd}`)
+  })
+
+
+  ipcMain.handle("clang", ()=>{
+    exec(`start pwsh.exe -F clangd.ps1 ${getStatus().cwd}`)
+  })
 }
 
 export function getStatus() {
