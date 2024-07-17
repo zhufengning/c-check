@@ -6,7 +6,8 @@ from c_parser import AST, cparser
 from c_parser.AST import *
 
 class ComplexityAnalyzer:
-    def __init__(self, ast):
+    def __init__(self, ast,filename:str):
+        self.filename=filename
         self.ast = ast
         self.complexity = 0
         self.function_lengths = []
@@ -25,6 +26,7 @@ class ComplexityAnalyzer:
         max_nested_level = max(self.nested_levels) if self.nested_levels else 0
 
         return {
+            "filename":self.filename,
             "cyclomatic_complexity": self.complexity,
             "average_function_length": average_function_length,
             "max_nested_level": max_nested_level,

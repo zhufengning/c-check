@@ -6,6 +6,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
+from reportlab.lib.enums import TA_LEFT, TA_CENTER
 from reportlab.platypus import Paragraph, SimpleDocTemplate,Image,Table,TableStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -14,7 +15,7 @@ from reportlab.graphics.charts.piecharts import Pie
 from reportlab.graphics.shapes import Drawing
 from reportlab.graphics.renderPDF import drawToString
 from PIL import Image as PILImage
-from c_parser.DFSVisitor import DFSVisitor
+from c_parser.DFSVisitor import DFSVisitor,DFSVisitorWithDepth
 import c_parser.ply.yacc as yacc
 from c_parser import AST, cparser
 from f_management import function_management
@@ -165,7 +166,7 @@ def generate_invalid_fun_table(invalid_fun_infos:list,table_name:str)->tuple[Tab
     return table,table_title
     
 def generate_risk_fun_table(risk_fun_infos:list,table_name:str)->tuple[Table,Paragraph]:
-    """返回生成的表格和表格名
+    """返回生成的风险函数表格和表格名
 
     :param risk_fun_infos: _description_
     """
@@ -181,7 +182,8 @@ def generate_risk_fun_table(risk_fun_infos:list,table_name:str)->tuple[Table,Par
         position = '{} x {}'.format(entry[keys_list[1]][0], entry[keys_list[1]][1])
         fun_name = entry[keys_list[2]]
         fun_level = entry[keys_list[3]]
-        fun_solution = entry[keys_list[4]]
+        # fun_solution = entry[keys_list[4]]
+        fun_solution = Paragraph(entry[keys_list[4]], style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_LEFT))
         table_data.append([file_path,position, fun_name, fun_level, fun_solution])
 
     # 创建表格对象
@@ -273,6 +275,7 @@ if __name__ == '__main__':
     cparser = cparser.Cparser()
     parser = yacc.yacc(module=cparser)
     source2 = """#include <stdio.h>
+    int m;
     #define a 2
     int f() {
     f();
@@ -305,7 +308,7 @@ if __name__ == '__main__':
     risk_functions=[{'fun_name': 'gets', 'fun_level': '最危险', 'fun_solution': '使用 fgets（buf, size, stdin）。这几乎总是一个大问题！'},
                      {'fun_name': 'strcpy', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy。'}, 
                      {'fun_name': 'function1', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy。'}, 
-                     {'fun_name': 'f', 'fun_level': '很危险', 'fun_solution': '不能使用。'}]
+                     {'fun_name': 'f', 'fun_level': '很危险', 'fun_solution': '不能使用。1111111111111111111111111111111111111111111111111111111111111111111111111'}]
 
     invalid_functions=[{'File Path':"test.c","Position":(1,1),"Function Name":"无效函数"},
                        {'File Path':"test.c","Position":(1,1),"Function Name":"无效函数"}]
@@ -340,8 +343,10 @@ if __name__ == '__main__':
     #                 {'fun_name': 'vsnprintf', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'}]
     v=Risk_fun_Visitor(risk_functions,"test.c")
     v.visit(ast)
-    print(v.risk_fun_infos)
-    for node in v.risk_fun_nodes:
-        print(node)
+    
+    
+    # print(v.risk_fun_infos)
+    # for node in v.risk_fun_nodes:
+    #     print(node)
     file_name = "report.pdf"
     generate_report(file_name,"test",variable_infos,v.risk_fun_infos,invalid_functions)
