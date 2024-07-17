@@ -44,6 +44,7 @@ class Risk_fun_Visitor(DFSVisitor):
                 self.risk_fun_nodes.append(node)
                 self.risk_fun_infos.append({"文件名":self.file_name,"位置":node.pos,"函数名":entry["fun_name"],"风险等级":entry["fun_level"],"解决方法":entry["fun_solution"]})
 
+
 def generate_risk_fun_pie_chart(risk_fun_infos:list,level_nums:dict):
     """生成风险函数饼图
     Args:
@@ -81,6 +82,22 @@ def generate_risk_fun_pie_chart(risk_fun_infos:list,level_nums:dict):
     plt.close()
     print(chart_filename)
     return chart_filename
+def generate_tatal__table_row(total_count:int)->Table:
+    
+    variable_tatal_data=[[
+    Paragraph('共计', style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_CENTER)),
+    Paragraph(str(total_count)+"处", style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_CENTER)),
+]]
+    table = Table(variable_tatal_data, colWidths=[250,250])
+        # 设定表格样式
+    table.setStyle(TableStyle([
+        
+        ('FONTNAME', (0, 0), (-1, -1), 'SimSun'),  # 设置整个表格的字体为Simsun
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # 设置所有单元格居中对齐
+        ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),  # 设置表格内部网格线
+        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),  # 设置表格外框线
+    ]))
+    return table
 def generate_variable_table(variable_infos:list,table_name:str)->tuple[Table,Paragraph]:
     """生成变量表格
     Args:
@@ -98,7 +115,6 @@ def generate_variable_table(variable_infos:list,table_name:str)->tuple[Table,Par
         variable_name = Paragraph(entry[keys_list[2]], style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_CENTER))
         belong_fun=Paragraph(entry[keys_list[3]], style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_CENTER))
         table_data.append([file_path,position, variable_name,belong_fun])
-
     # 创建表格对象
     table_width=500
     column_percentages=[0.4,0.1,0.2,0.3]
@@ -143,7 +159,7 @@ def generate_invalid_fun_table(invalid_fun_infos:list,table_name:str)->tuple[Tab
         position = '{} x {}'.format(entry[keys_list[1]][0], entry[keys_list[1]][1])
         fun_name = Paragraph(entry[keys_list[2]], style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_CENTER))
         table_data.append([file_path,position, fun_name])
-
+    
     # 创建表格对象
 
     table_width=500
@@ -191,7 +207,8 @@ def generate_risk_fun_table(risk_fun_infos:list,table_name:str)->tuple[Table,Par
         # fun_solution = entry[keys_list[4]]
         fun_solution = Paragraph(entry[keys_list[4]], style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_LEFT))
         table_data.append([file_path,position, fun_name, fun_level, fun_solution])
-
+    
+    
     # 创建表格对象
     table_width=500
     column_percentages=[0.3,0.1,0.2,0.1,0.3]
@@ -229,7 +246,7 @@ def generate_complexity_table(complexity_infos:list,table_name:str)->tuple[Table
         average_function_length=entry[keys_list[2]]
         max_nested_level=entry[keys_list[3]]
         table_data.append([file_path,cyclomatic_complexity, average_function_length, max_nested_level])
-
+    
     # 创建表格对象
     table_width=500
     column_percentages=[0.4,0.2,0.2,0.2]
@@ -299,23 +316,38 @@ def generate_report(file_name:str,program:str,variable_infos:list,risk_fun_infos
         content.append(Paragraph("无有效数据生成饼图",styles['Song']))
     else:
         content.append(Image(pie_chart_path, width=400, height=400,hAlign='CENTER', kind='proportional'))
+    content.append(Paragraph("风险函数统计如下：",styles['Song']))
+    content.append(Paragraph("最危险函数："+str(level_nums['最危险'])+"个",styles['Song']))
+    content.append(Paragraph("很危险函数："+str(level_nums['很危险'])+"个",styles['Song']))
+    content.append(Paragraph("危险函数："+str(level_nums['危险'])+"个",styles['Song']))
+    content.append(Paragraph("稍低危险函数："+str(level_nums['稍低危险'])+"个",styles['Song']))
+    content.append(Paragraph("中等危险函数："+str(level_nums['中等危险'])+"个",styles['Song']))
+    content.append(Paragraph("低危险函数："+str(level_nums['低危险'])+"个",styles['Song']))
+    content.append(Paragraph("共计："+str(level_nums['最危险']+level_nums['很危险']+level_nums['危险']+level_nums['稍低危险']+level_nums['中等危险']+level_nums['低危险'])+"个",styles['Song']))
     # 生成变量表
     variable_table,variable_table_title = generate_variable_table(variable_infos,'扫描到的无效变量表')
+    variable_total_table=generate_tatal__table_row(len(variable_infos))
     content.append(variable_table_title)
     content.append(variable_table)
+    content.append(variable_total_table)
     # 生成风险函数表
     risk_fun_table,risk_fun_table_title = generate_risk_fun_table(risk_fun_infos,'扫描到的风险函数表')
+    risk_fun_total_table=generate_tatal__table_row(len(risk_fun_infos))
     content.append(risk_fun_table_title)
-    # 将表格对象添加到内容列表中
     content.append(risk_fun_table)
+    content.append(risk_fun_total_table)
     # 生成无效函数表
     invalid_fun_table,invalid_fun_table_title=generate_invalid_fun_table(invalid_fun_infos,'扫描到的无效函数表')
+    invalid_fun_total_table=generate_tatal__table_row(len(invalid_fun_infos))
     content.append(invalid_fun_table_title)
     content.append(invalid_fun_table)
+    content.append(invalid_fun_total_table)
     # 生成复杂度分析表
     complexity_table,complexity_table_title = generate_complexity_table(complexity_infos,'文件复杂度分析表')
+    complexity_total_table=generate_tatal__table_row(len(complexity_infos))
     content.append(complexity_table_title)
     content.append(complexity_table)
+    content.append(complexity_total_table)
     pdf.build(content)
     # os.remove(pie_chart_path)
 
@@ -363,9 +395,13 @@ if __name__ == '__main__':
 
     invalid_functions=[{'File Path':"??????????????????????????????????test.c","Position":(1,1),"Function Name":"无效函数"},
                        {'File Path':"test.c","Position":(1,1),"Function Name":"无效函数"}]
-    variable_infos=[{'File Path':"test.c","Position":(1,1),"Variable Name":"int a[20]","Belong Function":"main"},
-                    {'File Path':"test.c","Position":(1,1),"Variable Name":"bool b","Belong Function":"main"}]
+    variable_infos=[{'File Path':"test.c","Position":(1,1),"Variable Name":"int a[20]","Belong Function":"main"}]
     complexity_info=[{'文件名': '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!this.c', '圈复杂度': 5, '平均函数长度': 11.5, '最大嵌套': 3},
+                     {'文件名': '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!this.c', '圈复杂度': 5, '平均函数长度': 11.5, '最大嵌套': 3},
+                     {'文件名': '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!this.c', '圈复杂度': 5, '平均函数长度': 11.5, '最大嵌套': 3},
+                     {'文件名': '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!this.c', '圈复杂度': 5, '平均函数长度': 11.5, '最大嵌套': 3},
+                     {'文件名': '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!this.c', '圈复杂度': 5, '平均函数长度': 11.5, '最大嵌套': 3},
+                     {'文件名': '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!this.c', '圈复杂度': 5, '平均函数长度': 11.5, '最大嵌套': 3},
                      {'文件名': '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!this.c', '圈复杂度': 5, '平均函数长度': 11.5, '最大嵌套': 3}]
     # risk_functions=[{'fun_name': 'gets', 'fun_level': '最危险', 'fun_solution': '使用 fgets（buf, size, stdin）这几乎总是一个大问题'}, 
     #                 {'fun_name': 'strcpy', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy'}, 
