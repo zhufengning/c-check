@@ -8,6 +8,7 @@ declare global {
       goFullscreen: () => Promise<void>
       getStatus: () => Promise<Status>
       setStatus: (string) => Promise<void>
+      openGraph: () => Promise<string>
     }
   }
 }

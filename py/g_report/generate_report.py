@@ -56,26 +56,26 @@ def generate_risk_fun_pie_chart(risk_fun_infos:list,level_nums:dict):
         return ""
     # 设置中文显示
     plt.rcParams['font.sans-serif'] = 'SimHei'
-    
+
     # 创建画布
     plt.figure(figsize=(8, 6))
-    
+
     # 绘制饼图
     plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140)
     plt.title('风险函数分布饼图', fontsize=16)
-    
+
     # 添加图例
     plt.legend(labels, loc="best", fontsize=10)
-    
+
     # 保持图像比例一致
     plt.axis('equal')
-    
+
     # 保存饼图到临时文件
     with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as temp_file:
         chart_filename = temp_file.name
         # chart_filename="py\g_report\图片"
         plt.savefig(chart_filename)
-    
+
     plt.close()
     print(chart_filename)
     return chart_filename
@@ -118,18 +118,18 @@ def generate_risk_fun_table(risk_fun_infos:list,table_name:str)->tuple[Table,Par
     )
     table_title = Paragraph(table_name, table_title_style)
     return table,table_title
-        
+import os
 def generate_report(file_name:str,program:str,risk_fun_infos:list):
     """生成报告
 
     :param file_name: _description_
     :return: _description_
     """
-    folder_path= "py/reports"
+    folder_path= os.path.join(os.path.dirname(__file__),"..", "reports")
     full_path = os.path.join(folder_path, file_name)
     # 定义要在文档中插入的内容
     # 返回一个字典，包含了多个预定义的样式，例如 'Title'、'Normal'、'Italic' 等。
-    pdfmetrics.registerFont(TTFont('SimSun', 'py\g_report\SimSun.ttf'))  #注册字体
+    pdfmetrics.registerFont(TTFont('SimSun', os.path.join(os.path.dirname(__file__), "SimSun.ttf")))  #注册字体
     styles = getSampleStyleSheet()
     styles.add(ParagraphStyle(fontName='SimSun', name='Song', leading=20, fontSize=12))  # 自己增加新注册的字体
     styles['Title'].fontName = 'SimSun' #将标题字体更改为'SimSun'
@@ -173,7 +173,7 @@ def generate_report(file_name:str,program:str,risk_fun_infos:list):
 
 
 if __name__ == '__main__':
-    
+
     cparser = cparser.Cparser()
     parser = yacc.yacc(module=cparser)
     source2 = """#include <stdio.h>
@@ -184,6 +184,7 @@ if __name__ == '__main__':
     }
     int main() {
     int x = 0;
+    gets(x);
     int *y = &x;
     int arr[50];
     arr[0] = 1;
@@ -207,35 +208,35 @@ if __name__ == '__main__':
     )
 
     # risk_functions=[{'fun_name': 'gets', 'fun_level': '最危险', 'fun_solution': '使用 fgets（buf, size, stdin）。这几乎总是一个大问题！'},
-    #                  {'fun_name': 'strcpy', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy。'}, 
-    #                  {'fun_name': 'function1', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy。'}, 
+    #                  {'fun_name': 'strcpy', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy。'},
+    #                  {'fun_name': 'function1', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy。'},
     #                  {'fun_name': 'f', 'fun_level': '很危险', 'fun_solution': '不能使用。'}]
-    risk_functions=[{'fun_name': 'gets', 'fun_level': '最危险', 'fun_solution': '使用 fgets（buf, size, stdin）这几乎总是一个大问题'}, 
-                    {'fun_name': 'strcpy', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy'}, 
-                    {'fun_name': 'strcat', 'fun_level': '很危险', 'fun_solution': '改为使用 strncat'}, 
-                    {'fun_name': 'sprintf', 'fun_level': '很危险', 'fun_solution': '改为使用 snprintf，或者使用精度说明符'}, 
-                    {'fun_name': 'scanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'}, 
-                    {'fun_name': 'sscanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'}, 
-                    {'fun_name': 'vsprintf', 'fun_level': '很危险', 'fun_solution': '改为使用 vsnprintf，或者使用精度说明符'}, 
-                    {'fun_name': 'vscanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'}, 
-                    {'fun_name': 'vsscanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'}, 
-                    {'fun_name': 'streadd', 'fun_level': '很危险', 'fun_solution': '确保分配的目的地参数大小是源参数大小的四倍'}, 
-                    {'fun_name': 'strecpy', 'fun_level': '很危险', 'fun_solution': '确保分配的目的地参数大小是源参数大小的四倍'}, 
-                    {'fun_name': 'strtrns', 'fun_level': '危险', 'fun_solution': '手工检查来查看目的地大小是否至少与源字符串相等'}, 
-                    {'fun_name': 'realpath', 'fun_level': '稍低危险', 'fun_solution': '分配缓冲区大小为 MAXPATHLEN。同样，手工检查参数以确保输入参数不超过 MAXPATHLEN'}, 
-                    {'fun_name': 'syslog', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'}, 
-                    {'fun_name': 'getopt_long', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'}, 
-                    {'fun_name': 'getopt', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'}, 
-                    {'fun_name': 'getpass', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'}, 
-                    {'fun_name': 'getchar', 'fun_level': '中等危险', 'fun_solution': '如果在循环中使用该函数，确保检查缓冲区边界'}, 
-                    {'fun_name': 'fgetc', 'fun_level': '中等危险', 'fun_solution': '如果在循环 中使用该函数，确保检查缓冲区边界'}, 
-                    {'fun_name': 'getc', 'fun_level': '中等危险', 'fun_solution': '如果在循环中使用该函数，确保检查缓冲区边界'}, 
-                    {'fun_name': 'read', 'fun_level': '中等危险', 'fun_solution': '如果在循环中使用该函数，确保检查缓冲区边界'}, 
-                    {'fun_name': 'bcopy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'}, 
-                    {'fun_name': 'fgets', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'}, 
-                    {'fun_name': 'memcpy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'}, 
-                    {'fun_name': 'strccpy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'}, 
-                    {'fun_name': 'strncpy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'}, 
+    risk_functions=[{'fun_name': 'gets', 'fun_level': '最危险', 'fun_solution': '使用 fgets（buf, size, stdin）这几乎总是一个大问题'},
+                    {'fun_name': 'strcpy', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy'},
+                    {'fun_name': 'strcat', 'fun_level': '很危险', 'fun_solution': '改为使用 strncat'},
+                    {'fun_name': 'sprintf', 'fun_level': '很危险', 'fun_solution': '改为使用 snprintf，或者使用精度说明符'},
+                    {'fun_name': 'scanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'},
+                    {'fun_name': 'sscanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'},
+                    {'fun_name': 'vsprintf', 'fun_level': '很危险', 'fun_solution': '改为使用 vsnprintf，或者使用精度说明符'},
+                    {'fun_name': 'vscanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'},
+                    {'fun_name': 'vsscanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'},
+                    {'fun_name': 'streadd', 'fun_level': '很危险', 'fun_solution': '确保分配的目的地参数大小是源参数大小的四倍'},
+                    {'fun_name': 'strecpy', 'fun_level': '很危险', 'fun_solution': '确保分配的目的地参数大小是源参数大小的四倍'},
+                    {'fun_name': 'strtrns', 'fun_level': '危险', 'fun_solution': '手工检查来查看目的地大小是否至少与源字符串相等'},
+                    {'fun_name': 'realpath', 'fun_level': '稍低危险', 'fun_solution': '分配缓冲区大小为 MAXPATHLEN。同样，手工检查参数以确保输入参数不超过 MAXPATHLEN'},
+                    {'fun_name': 'syslog', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'},
+                    {'fun_name': 'getopt_long', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'},
+                    {'fun_name': 'getopt', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'},
+                    {'fun_name': 'getpass', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'},
+                    {'fun_name': 'getchar', 'fun_level': '中等危险', 'fun_solution': '如果在循环中使用该函数，确保检查缓冲区边界'},
+                    {'fun_name': 'fgetc', 'fun_level': '中等危险', 'fun_solution': '如果在循环 中使用该函数，确保检查缓冲区边界'},
+                    {'fun_name': 'getc', 'fun_level': '中等危险', 'fun_solution': '如果在循环中使用该函数，确保检查缓冲区边界'},
+                    {'fun_name': 'read', 'fun_level': '中等危险', 'fun_solution': '如果在循环中使用该函数，确保检查缓冲区边界'},
+                    {'fun_name': 'bcopy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'},
+                    {'fun_name': 'fgets', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'},
+                    {'fun_name': 'memcpy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'},
+                    {'fun_name': 'strccpy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'},
+                    {'fun_name': 'strncpy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'},
                     {'fun_name': 'vsnprintf', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'}]
     v=Risk_fun_Visitor(risk_functions)
     v.visit(ast)
