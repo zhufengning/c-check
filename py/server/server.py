@@ -354,3 +354,40 @@ def graph(item: ReadItem):
     gen_graph(ast)
     db.close()
     return "OK"
+
+@app.post("/risk")
+def risk(user: User):
+    root, db = getCache()
+
+    from f_management.function_management import show_functions
+    from g_report.generate_report import generate_report, Risk_fun_Visitor
+
+    userbase = os.path.join("users", user.user)
+    rules = show_functions(userbase, "risk_fun", user.passwd)
+    #print(rules)
+
+    al = []
+    av = []
+
+    for f in root.asts:
+        print(f)
+        ast = root.asts[f]
+        vis = Risk_fun_Visitor(rules, f)
+        vis.visit(ast)
+        al += vis.risk_fun_infos
+        var_vis = astwalk.getVars2(ast)
+        all_vars = var_vis.globalv + var_vis.localv
+        unused_vars = [x for x in all_vars if x["used"] == False]
+        av += unused_vars
+
+    print(al)
+    print(av)
+    print(root.functions, root.callee)
+    af = [x for x in root.functions if x["used"]==False]
+    for i in range(len(af)):
+        af[i].pop("used")
+
+    generate_report(os.path.join(os.path.dirname(__file__),"..", "reports","report.pdf"),"Program", av,al,af)
+
+    db.close()
+    return al

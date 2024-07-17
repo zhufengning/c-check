@@ -168,3 +168,5 @@ cython_debug/
 .idea/
 
 py/kvdb/db
+py/server/cache/cache.db/*
+py/reports/report.pdf
