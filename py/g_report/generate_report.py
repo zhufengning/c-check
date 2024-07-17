@@ -42,7 +42,7 @@ class Risk_fun_Visitor(DFSVisitor):
             entry=function_management.find_function_from_list(self.risk_funcions,node.id)
             if entry:
                 self.risk_fun_nodes.append(node)
-                self.risk_fun_infos.append({"File Path":self.file_name,"Position":node.pos,"Function Name":entry["fun_name"],"Level":entry["fun_level"],"Solution":entry["fun_solution"]})
+                self.risk_fun_infos.append({"文件名":self.file_name,"位置":node.pos,"函数名":entry["fun_name"],"风险等级":entry["fun_level"],"解决方法":entry["fun_solution"]})
 
 def generate_risk_fun_pie_chart(risk_fun_infos:list,level_nums:dict):
     """生成风险函数饼图
@@ -93,14 +93,16 @@ def generate_variable_table(variable_infos:list,table_name:str)->tuple[Table,Par
     table_data=[keys_list]
     print(table_data)
     for entry in variable_infos:
-        file_path = entry[keys_list[0]]
+        file_path = Paragraph(entry[keys_list[0]], style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_CENTER))
         position = '{} x {}'.format(entry[keys_list[1]][0], entry[keys_list[1]][1])
-        variable_name = entry[keys_list[2]]
-        belong_fun=entry[keys_list[3]]
+        variable_name = Paragraph(entry[keys_list[2]], style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_CENTER))
+        belong_fun=Paragraph(entry[keys_list[3]], style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_CENTER))
         table_data.append([file_path,position, variable_name,belong_fun])
 
     # 创建表格对象
-    table = Table(table_data, colWidths=[80, 80, 80,80])
+    table_width=500
+    column_percentages=[0.4,0.1,0.2,0.3]
+    table = Table(table_data, colWidths=[table_width*pct for pct in column_percentages])
     # 设定表格样式
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),  # 设置表头背景色
@@ -137,13 +139,17 @@ def generate_invalid_fun_table(invalid_fun_infos:list,table_name:str)->tuple[Tab
     table_data=[keys_list]
     print(table_data)
     for entry in invalid_fun_infos:
-        file_path = entry[keys_list[0]]
+        file_path = Paragraph(entry[keys_list[0]], style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_CENTER))
         position = '{} x {}'.format(entry[keys_list[1]][0], entry[keys_list[1]][1])
-        fun_name = entry[keys_list[2]]
+        fun_name = Paragraph(entry[keys_list[2]], style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_CENTER))
         table_data.append([file_path,position, fun_name])
 
     # 创建表格对象
-    table = Table(table_data, colWidths=[80, 80, 200])
+
+    table_width=500
+    column_percentages=[0.4,0.2,0.4]
+    table = Table(table_data, colWidths=[table_width*pct for pct in column_percentages])
+   
     # 设定表格样式
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),  # 设置表头背景色
@@ -178,16 +184,18 @@ def generate_risk_fun_table(risk_fun_infos:list,table_name:str)->tuple[Table,Par
     table_data=[keys_list]
 
     for entry in risk_fun_infos:
-        file_path = entry[keys_list[0]]
+        file_path = Paragraph(entry[keys_list[0]], style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_CENTER))
         position = '{} x {}'.format(entry[keys_list[1]][0], entry[keys_list[1]][1])
-        fun_name = entry[keys_list[2]]
-        fun_level = entry[keys_list[3]]
+        fun_name = Paragraph(entry[keys_list[2]], style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_CENTER))
+        fun_level = Paragraph(entry[keys_list[3]], style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_CENTER))
         # fun_solution = entry[keys_list[4]]
         fun_solution = Paragraph(entry[keys_list[4]], style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_LEFT))
         table_data.append([file_path,position, fun_name, fun_level, fun_solution])
 
     # 创建表格对象
-    table = Table(table_data, colWidths=[80,80, 80, 80, 200])
+    table_width=500
+    column_percentages=[0.3,0.1,0.2,0.1,0.3]
+    table = Table(table_data, colWidths=[table_width*pct for pct in column_percentages])
     # 设定表格样式
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),  # 设置表头背景色
@@ -208,8 +216,45 @@ def generate_risk_fun_table(risk_fun_infos:list,table_name:str)->tuple[Table,Par
     )
     table_title = Paragraph(table_name, table_title_style)
     return table,table_title
-import os
-def generate_report(file_name:str,program:str,variable_infos:list,risk_fun_infos:list,invalid_fun_infos:list):
+
+
+def generate_complexity_table(complexity_infos:list,table_name:str)->tuple[Table,Paragraph]:
+    
+    keys_list=list(complexity_infos[0].keys())
+    table_data=[keys_list]
+
+    for entry in complexity_infos:
+        file_path = Paragraph(entry[keys_list[0]], style=ParagraphStyle(name='Normal', fontName='SimSun', fontSize=10, alignment=TA_CENTER))
+        cyclomatic_complexity=entry[keys_list[1]]
+        average_function_length=entry[keys_list[2]]
+        max_nested_level=entry[keys_list[3]]
+        table_data.append([file_path,cyclomatic_complexity, average_function_length, max_nested_level])
+
+    # 创建表格对象
+    table_width=500
+    column_percentages=[0.4,0.2,0.2,0.2]
+    table = Table(table_data, colWidths=[table_width*pct for pct in column_percentages])
+    # 设定表格样式
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),  # 设置表头背景色
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),  # 设置表头文字颜色
+        ('FONTNAME', (0, 0), (-1, -1), 'SimSun'),  # 设置整个表格的字体为Simsun
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # 设置所有单元格居中对齐
+        ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),  # 设置表格内部网格线
+        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),  # 设置表格外框线
+    ]))
+    # 添加表名
+    table_title_style = ParagraphStyle(
+        'TitleStyle',
+        fontName='SimSun',
+        fontSize=16,
+        textColor=colors.black,
+        spaceAfter=10,
+        alignment=1  # 1代表居中对齐
+    )
+    table_title = Paragraph(table_name, table_title_style)
+    return table,table_title
+def generate_report(file_name:str,program:str,variable_infos:list,risk_fun_infos:list,invalid_fun_infos:list,complexity_infos:list):
     """生成报告
 
     :param file_name: _description_
@@ -243,8 +288,9 @@ def generate_report(file_name:str,program:str,variable_infos:list,risk_fun_infos
         '低危险': 0,
         # '无效函数': 0
     }
+    keys_list=list(risk_fun_infos[0].keys())
     for func in risk_fun_infos:
-        level = func['Level']
+        level = func[keys_list[3]]
         if level in level_nums:
             level_nums[level] += 1
     # 生成饼图
@@ -254,7 +300,7 @@ def generate_report(file_name:str,program:str,variable_infos:list,risk_fun_infos
     else:
         content.append(Image(pie_chart_path, width=400, height=400,hAlign='CENTER', kind='proportional'))
     # 生成变量表
-    variable_table,variable_table_title = generate_variable_table(variable_infos,'扫描到的变量表')
+    variable_table,variable_table_title = generate_variable_table(variable_infos,'扫描到的无效变量表')
     content.append(variable_table_title)
     content.append(variable_table)
     # 生成风险函数表
@@ -266,6 +312,10 @@ def generate_report(file_name:str,program:str,variable_infos:list,risk_fun_infos
     invalid_fun_table,invalid_fun_table_title=generate_invalid_fun_table(invalid_fun_infos,'扫描到的无效函数表')
     content.append(invalid_fun_table_title)
     content.append(invalid_fun_table)
+    # 生成复杂度分析表
+    complexity_table,complexity_table_title = generate_complexity_table(complexity_infos,'文件复杂度分析表')
+    content.append(complexity_table_title)
+    content.append(complexity_table)
     pdf.build(content)
     # os.remove(pie_chart_path)
 
@@ -311,38 +361,40 @@ if __name__ == '__main__':
                      {'fun_name': 'function1', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy。'},
                      {'fun_name': 'f', 'fun_level': '很危险', 'fun_solution': '不能使用。1111111111111111111111111111111111111111111111111111111111111111111111111'}]
 
-    invalid_functions=[{'File Path':"test.c","Position":(1,1),"Function Name":"无效函数"},
+    invalid_functions=[{'File Path':"??????????????????????????????????test.c","Position":(1,1),"Function Name":"无效函数"},
                        {'File Path':"test.c","Position":(1,1),"Function Name":"无效函数"}]
     variable_infos=[{'File Path':"test.c","Position":(1,1),"Variable Name":"int a[20]","Belong Function":"main"},
                     {'File Path':"test.c","Position":(1,1),"Variable Name":"bool b","Belong Function":"main"}]
-    # risk_functions=[{'fun_name': 'gets', 'fun_level': '最危险', 'fun_solution': '使用 fgets（buf, size, stdin）这几乎总是一个大问题'},
-    #                 {'fun_name': 'strcpy', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy'},
-    #                 {'fun_name': 'strcat', 'fun_level': '很危险', 'fun_solution': '改为使用 strncat'},
-    #                 {'fun_name': 'sprintf', 'fun_level': '很危险', 'fun_solution': '改为使用 snprintf，或者使用精度说明符'},
-    #                 {'fun_name': 'scanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'},
-    #                 {'fun_name': 'sscanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'},
-    #                 {'fun_name': 'vsprintf', 'fun_level': '很危险', 'fun_solution': '改为使用 vsnprintf，或者使用精度说明符'},
-    #                 {'fun_name': 'vscanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'},
-    #                 {'fun_name': 'vsscanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'},
-    #                 {'fun_name': 'streadd', 'fun_level': '很危险', 'fun_solution': '确保分配的目的地参数大小是源参数大小的四倍'},
-    #                 {'fun_name': 'strecpy', 'fun_level': '很危险', 'fun_solution': '确保分配的目的地参数大小是源参数大小的四倍'},
-    #                 {'fun_name': 'strtrns', 'fun_level': '危险', 'fun_solution': '手工检查来查看目的地大小是否至少与源字符串相等'},
-    #                 {'fun_name': 'realpath', 'fun_level': '稍低危险', 'fun_solution': '分配缓冲区大小为 MAXPATHLEN。同样，手工检查参数以确保输入参数不超过 MAXPATHLEN'},
-    #                 {'fun_name': 'syslog', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'},
-    #                 {'fun_name': 'getopt_long', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'},
-    #                 {'fun_name': 'getopt', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'},
-    #                 {'fun_name': 'getpass', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'},
-    #                 {'fun_name': 'getchar', 'fun_level': '中等危险', 'fun_solution': '如果在循环中使用该函数，确保检查缓冲区边界'},
-    #                 {'fun_name': 'fgetc', 'fun_level': '中等危险', 'fun_solution': '如果在循环 中使用该函数，确保检查缓冲区边界'},
-    #                 {'fun_name': 'getc', 'fun_level': '中等危险', 'fun_solution': '如果在循环中使用该函数，确保检查缓冲区边界'},
-    #                 {'fun_name': 'read', 'fun_level': '中等危险', 'fun_solution': '如果在循环中使用该函数，确保检查缓冲区边界'},
-    #                 {'fun_name': 'bcopy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'},
-    #                 {'fun_name': 'fgets', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'},
-    #                 {'fun_name': 'memcpy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'},
-    #                 {'fun_name': 'strccpy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'},
-    #                 {'fun_name': 'strncpy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'},
+    complexity_info=[{'文件名': '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!this.c', '圈复杂度': 5, '平均函数长度': 11.5, '最大嵌套': 3},
+                     {'文件名': '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!this.c', '圈复杂度': 5, '平均函数长度': 11.5, '最大嵌套': 3}]
+    # risk_functions=[{'fun_name': 'gets', 'fun_level': '最危险', 'fun_solution': '使用 fgets（buf, size, stdin）这几乎总是一个大问题'}, 
+    #                 {'fun_name': 'strcpy', 'fun_level': '很危险', 'fun_solution': '改为使用 strncpy'}, 
+    #                 {'fun_name': 'strcat', 'fun_level': '很危险', 'fun_solution': '改为使用 strncat'}, 
+    #                 {'fun_name': 'sprintf', 'fun_level': '很危险', 'fun_solution': '改为使用 snprintf，或者使用精度说明符'}, 
+    #                 {'fun_name': 'scanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'}, 
+    #                 {'fun_name': 'sscanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'}, 
+    #                 {'fun_name': 'vsprintf', 'fun_level': '很危险', 'fun_solution': '改为使用 vsnprintf，或者使用精度说明符'}, 
+    #                 {'fun_name': 'vscanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'}, 
+    #                 {'fun_name': 'vsscanf', 'fun_level': '很危险', 'fun_solution': '使用精度说明符，或自己进行解析'}, 
+    #                 {'fun_name': 'streadd', 'fun_level': '很危险', 'fun_solution': '确保分配的目的地参数大小是源参数大小的四倍'}, 
+    #                 {'fun_name': 'strecpy', 'fun_level': '很危险', 'fun_solution': '确保分配的目的地参数大小是源参数大小的四倍'}, 
+    #                 {'fun_name': 'strtrns', 'fun_level': '危险', 'fun_solution': '手工检查来查看目的地大小是否至少与源字符串相等'}, 
+    #                 {'fun_name': 'realpath', 'fun_level': '稍低危险', 'fun_solution': '分配缓冲区大小为 MAXPATHLEN。同样，手工检查参数以确保输入参数不超过 MAXPATHLEN'}, 
+    #                 {'fun_name': 'syslog', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'}, 
+    #                 {'fun_name': 'getopt_long', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'}, 
+    #                 {'fun_name': 'getopt', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'}, 
+    #                 {'fun_name': 'getpass', 'fun_level': '稍低危险', 'fun_solution': '在将字符串输入传递给该函数之前，将所有字符串输入截成合理的大小'}, 
+    #                 {'fun_name': 'getchar', 'fun_level': '中等危险', 'fun_solution': '如果在循环中使用该函数，确保检查缓冲区边界'}, 
+    #                 {'fun_name': 'fgetc', 'fun_level': '中等危险', 'fun_solution': '如果在循环 中使用该函数，确保检查缓冲区边界'}, 
+    #                 {'fun_name': 'getc', 'fun_level': '中等危险', 'fun_solution': '如果在循环中使用该函数，确保检查缓冲区边界'}, 
+    #                 {'fun_name': 'read', 'fun_level': '中等危险', 'fun_solution': '如果在循环中使用该函数，确保检查缓冲区边界'}, 
+    #                 {'fun_name': 'bcopy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'}, 
+    #                 {'fun_name': 'fgets', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'}, 
+    #                 {'fun_name': 'memcpy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'}, 
+    #                 {'fun_name': 'strccpy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'}, 
+    #                 {'fun_name': 'strncpy', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'}, 
     #                 {'fun_name': 'vsnprintf', 'fun_level': '低危险', 'fun_solution': '确保缓冲区大小与它所说的一样大'}]
-    v=Risk_fun_Visitor(risk_functions,"test.c")
+    v=Risk_fun_Visitor(risk_functions,"//////////////////////test.c")
     v.visit(ast)
 
 
@@ -350,4 +402,4 @@ if __name__ == '__main__':
     # for node in v.risk_fun_nodes:
     #     print(node)
     file_name = "report.pdf"
-    generate_report(file_name,"test",variable_infos,v.risk_fun_infos,invalid_functions)
+    generate_report(file_name,"test",variable_infos,v.risk_fun_infos,invalid_functions,complexity_info)
