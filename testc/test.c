@@ -4,7 +4,7 @@
 unsigned x,y;
 int zz, zzz[20],z[35];
 /* int kk, kkk */
-// å“ˆå“ˆ
+// ¹þ¹þ
 
 int f() {
   f();
@@ -17,6 +17,13 @@ int main() {
   f(a + 2);
   float fuc;
   int *s;
+  if (a==0) {
+
+  } else if(a==1) {
+
+  } else{
+
+  }
   sprintf(s, "%lf scr", fuc );
   while (1) {
     lib_fun();

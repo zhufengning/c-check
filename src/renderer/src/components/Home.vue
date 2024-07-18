@@ -410,7 +410,7 @@ async function clang() {
 
             <v-list lines="three">
               <v-list-item
-                v-for="v in funcs.filter((x)=>x.name!='main')"
+                v-for="v in funcs.filter((x)=>x.name!='main' && x.used==false)"
                 :key="v"
                 :title="'任何文件中均未使用函数'"
                 :subtitle="`${v.name} 定义于${v.file}`"

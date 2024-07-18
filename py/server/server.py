@@ -380,6 +380,7 @@ def risk(user: User):
         var_vis = astwalk.getVars2(ast)
         all_vars = var_vis.globalv + var_vis.localv
         unused_vars = [x for x in all_vars if x["used"] == False]
+        print(unused_vars)
         for i in range(len(unused_vars)):
             unused_vars[i]["File Path"] = f
         av += unused_vars
@@ -391,6 +392,7 @@ def risk(user: User):
     for i in range(len(af)):
         af[i].pop("used")
         av[i].pop("used")
+        av[i].pop("name")
 
     print(av)
     generate_report(os.path.join(os.path.dirname(__file__),"..", "reports","report.pdf"),"Program", av,al,af,ac)

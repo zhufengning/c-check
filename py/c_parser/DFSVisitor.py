@@ -12,7 +12,6 @@ class DFSVisitor:
         if node is None:
             return
 
-        # 执行访问逻辑，这里是将节点加入已访问列表
         self.fn(node)
 
         # 递归访问子节点
@@ -36,7 +35,6 @@ class DFSVisitorWithDepth:
         if node is None:
             return
 
-        # 执行访问逻辑，这里是将节点加入已访问列表
         self.fn(node, depth)
 
         # 递归访问子节点
@@ -47,3 +45,4 @@ class DFSVisitorWithDepth:
                         self.visit(item, depth + 1)
             elif isinstance(attr, Node):
                 self.visit(attr, depth + 1)
+

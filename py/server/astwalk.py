@@ -84,6 +84,7 @@ class VarsVisitor2(DFSVisitorWithDepth):
 
                     vs.append({
                         "Variable Name": r,
+                        "name":vid,
                         "Position": i.pos,
                         "Belong Function": "",
                         "used": False,
@@ -100,14 +101,15 @@ class VarsVisitor2(DFSVisitorWithDepth):
                 localv = self.localv
                 globalv = self.globalv
                 vid = node.id.id if isinstance(node.id, AST.Pointer) else node.id
+                print(vid)
                 for i in range(len(localv)):
                     if (
-                        localv[i]["Variable Name"] == vid
+                        localv[i]["name"] == vid
                         and localv[i]["Belong Function"] == self.function
                     ):
                         localv[i]["used"] = True
                 for i in range(len(globalv)):
-                    if globalv[i]["Variable Name"] == vid and "Belong Function" not in globalv[i]:
+                    if globalv[i]["name"] == vid and "Belong Function" not in globalv[i]:
                         globalv[i]["used"] = True
             case AST.FunctionDef:
                 self.function = node.name
@@ -131,7 +133,7 @@ class FindVarVisitor(DFSVisitorWithDepth):
                             if i.id.id == self.var:
                                 self.results.append(i.pos)
             case AST.Variable:
-                print(node)
+                #print(node)
                 if isinstance(node.id, AST.Pointer):
                     if node.id.id == self.var and (
                         self.target_fun == "" or self.function == self.target_fun
@@ -175,7 +177,7 @@ class FunctionVisitor(DFSVisitorWithDepth):
     def fn(self, node, depth):
         match type(node):
             case AST.FunctionDef:
-                print(node)
+                #print(node)
                 self.functions.append(
                     {"name": node.name, "used": False, "pos": node.pos}
                 )
@@ -193,7 +195,7 @@ class MallocVisitor(DFSVisitorWithDepth):
         self.function = ""
 
     def fn(self, node, depth):
-        print(node)
+        #print(node)
         match type(node):
             case AST.Init:
                 if isinstance(node.expr, AST.FunctionCall) and node.expr.id == "malloc":
