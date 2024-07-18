@@ -1,8 +1,8 @@
 import { dialog, ipcMain, shell } from 'electron'
 import { Status } from '../model/status'
 import { dirname } from 'path'
-import { exec, spawn } from 'child_process'
-import { realpath, realpathSync } from 'fs'
+import { exec } from 'child_process'
+import { realpathSync } from 'fs'
 
 let status = new Status()
 
@@ -22,12 +22,12 @@ export function initHandlers(mainWindow) {
     return await shell.openPath(p)
   })
 
-  ipcMain.handle("shell", ()=>{
+  ipcMain.handle("shell", () => {
     exec(`start pwsh.exe -wd ${getStatus().cwd}`)
   })
 
 
-  ipcMain.handle("clang", ()=>{
+  ipcMain.handle("clang", () => {
     exec(`start pwsh.exe -F clangd.ps1 ${getStatus().cwd}`)
   })
 }

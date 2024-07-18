@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// @ts-nocheck
 import { onMounted, ref } from 'vue'
 import * as monaco from 'monaco-editor'
 import { useRouter } from 'vue-router'
@@ -64,9 +65,9 @@ function transformToTreeNodes(obj: any, path: string = ''): TreeNode[] {
   })
 }
 
-async function chooseFolder() {
-  console.log(await window.api.chooseFolder())
-}
+// async function chooseFolder() {
+//   console.log(await window.api.chooseFolder())
+// }
 
 let draw_poses: any[] = []
 function test_draw() {
@@ -231,7 +232,7 @@ async function funcClick(x) {
 async function findDef() {
   const s = editor1.getModel()?.getValueInRange(editor1.getSelection()!)
 
-  const res = funcs.value.find((x) => x.name == s)
+  const res = funcs.value.find((x) => x['name'] == s)
   console.log(res)
   funcClick(res)
 }
@@ -344,7 +345,7 @@ async function clang() {
       <div ref="editor_container" style="height: 90vh"></div>
     </v-main>
     <v-navigation-drawer permanent location="right" :width="300">
-      <v-expansion-panels variant="accordion">
+      <v-expansion-panels variant="accordion" multiple>
         <v-expansion-panel title="变量">
           <v-expansion-panel-text>
             <p>全局</p>

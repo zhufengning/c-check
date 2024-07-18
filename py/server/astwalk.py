@@ -193,6 +193,7 @@ class MallocVisitor(DFSVisitorWithDepth):
         self.function = ""
 
     def fn(self, node, depth):
+        print(node)
         match type(node):
             case AST.Init:
                 if isinstance(node.expr, AST.FunctionCall) and node.expr.id == "malloc":

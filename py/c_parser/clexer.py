@@ -66,7 +66,7 @@ class CLexer(object):
         t.lexer.skip(1)
 
     def t_LINE_COMMENT(self, t):
-        r"\#.*"
+        r"\#.*|//.*"
         pass
 
     def t_BLOCK_COMMENT(self, t):

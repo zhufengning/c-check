@@ -1,7 +1,7 @@
 <script setup lang="ts">
+// @ts-nocheck
 import { apiPost } from '../../../model/api'
-import { s } from 'vite/dist/node/types.d-aGj9QkWt'
-import { Ref, computed, nextTick, onMounted, reactive, watch } from 'vue'
+import { computed, nextTick, onMounted, reactive, watch } from 'vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -56,13 +56,13 @@ async function initialize() {
   ).json()
 }
 
-function editItem(item) {
+function editItem(item: any) {
   editedIndex.value = desserts.value.indexOf(item)
   Object.assign(editedItem, item)
   dialog.value = true
 }
 
-async function deleteItem(item) {
+async function deleteItem(item: any) {
   editedIndex.value = desserts.value.indexOf(item)
   Object.assign(editedItem, item)
   updateRules()
@@ -122,7 +122,7 @@ const search_text = ref('get[sc]')
 function do_search() {
   const reg = new RegExp(search_text.value)
   desserts_searched.value = desserts.value.filter((item) => {
-    return reg.test(item.fun_name) || reg.test(item.fun_solution)
+    return reg.test(item['fun_name']) || reg.test(item['fun_level']) || reg.test(item['fun_solution'])
   })
 }
 </script>

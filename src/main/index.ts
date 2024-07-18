@@ -1,9 +1,8 @@
-import electron, { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { initHandlers } from './status_manage'
-import { exec, execFileSync, spawn } from 'child_process'
 
 let mainWindow: BrowserWindow | null
 

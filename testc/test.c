@@ -3,6 +3,8 @@
 
 unsigned x,y;
 int zz, zzz[20],z[35];
+/* int kk, kkk */
+// 哈哈
 
 int f() {
   f();
@@ -11,10 +13,11 @@ int f() {
 int main() {
   int a = 0,b;
   x=a;
-  printf("%d", a);
+  printf("int aa; %d ", a);
   f(a + 2);
   float fuc;
-  sprintf("%lf scr", fuc );
+  int *s;
+  sprintf(s, "%lf scr", fuc );
   while (1) {
     lib_fun();
   }
