@@ -109,7 +109,7 @@ class VarsVisitor2(DFSVisitorWithDepth):
                     ):
                         localv[i]["used"] = True
                 for i in range(len(globalv)):
-                    if globalv[i]["name"] == vid and "Belong Function" not in globalv[i]:
+                    if globalv[i]["name"] == vid:
                         globalv[i]["used"] = True
             case AST.FunctionDef:
                 self.function = node.name
