@@ -176,7 +176,8 @@ async function openFile(node: TreeNode) {
 
 function switchSelection(v) {
   const nv = {}
-  for (const i of v) {
+  for (let i:string of v) {
+    i = i.replaceAll("\\","/")
     nv[i] = true
   }
 

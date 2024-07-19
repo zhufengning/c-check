@@ -12,7 +12,7 @@ export function initHandlers(mainWindow) {
   ipcMain.handle('set-status', setStatus)
   ipcMain.handle('fullscreen', () => goFullscreen(mainWindow))
   ipcMain.handle('open-graph', async () => {
-    const p = realpathSync('./py/server/graph.png')
+    const p = realpathSync('./py/server/graph0.png')
     console.log(p)
     return await shell.openPath(p)
   })

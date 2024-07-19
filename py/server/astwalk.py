@@ -12,6 +12,7 @@ class VarsVisitor(DFSVisitorWithDepth):
         self.localv = []
 
     def fn(self, node, depth):
+        print(node)
         match type(node):
             case AST.Declaration:
                 vs = []
@@ -114,7 +115,7 @@ class VarsVisitor2(DFSVisitorWithDepth):
             case AST.FunctionDef:
                 self.function = node.name
 
-class FindVarVisitor(DFSVisitorWithDepth):
+class FindVarVisitor(DFSVisitor):
     def __init__(self, fun, var):
         super().__init__()
         self.target_fun = fun
@@ -122,7 +123,7 @@ class FindVarVisitor(DFSVisitorWithDepth):
         self.results = []
         self.function = ""
 
-    def fn(self, node, depth):
+    def fn(self, node):
         match type(node):
             case AST.Declaration:
                 if self.target_fun == "" or self.function == self.target_fun:
@@ -149,6 +150,7 @@ class FindVarVisitor(DFSVisitorWithDepth):
 
 def getVars(ast):
     print(ast.printTree(0))
+    # print(ast)
     mv = VarsVisitor()
     mv.visit(ast)
     return {"local": mv.localv, "global": mv.globalv}
@@ -168,13 +170,13 @@ def findVar(ast, var, fun):
 from collections import defaultdict
 
 
-class FunctionVisitor(DFSVisitorWithDepth):
+class FunctionVisitor(DFSVisitor):
     def __init__(self):
         self.functions = []
         self.calls = ["main"]
         self.callee = {}
 
-    def fn(self, node, depth):
+    def fn(self, node):
         match type(node):
             case AST.FunctionDef:
                 #print(node)

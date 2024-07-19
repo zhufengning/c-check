@@ -120,8 +120,9 @@ def gen_graph(ast):
     visitor.visit(ast)
     graphs = visitor.get_graphs()
 
+    cnt = 0
     for func_name, G in graphs.items():
-        plt.figure(figsize=(20, 15))
+        fig = plt.figure(figsize=(20, 15))
         pos = nx.spring_layout(G)
         edge_labels = nx.get_edge_attributes(G, 'label')
         filtered_edges = [(u, v) for (u, v, d) in G.edges(data=True) if 'label' in d]
@@ -132,4 +133,5 @@ def gen_graph(ast):
         nx.draw(G, pos, with_labels=True, node_size=2000, node_color='skyblue', font_size=16, font_color='black',
                 font_weight='bold', arrows=True)
         plt.title(f"Data Flow Graph for function {func_name}")
-        plt.savefig("graph.png")
+        fig.savefig(f"graph{cnt}.png")
+        cnt+=1
