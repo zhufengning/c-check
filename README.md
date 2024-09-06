@@ -8,6 +8,8 @@ An Electron application with Vue and TypeScript
 
 ## Project Setup
 
+### 首先启动py/server下的fastapi服务
+
 ### Install
 
 ```bash
